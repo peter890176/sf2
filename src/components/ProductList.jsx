@@ -61,6 +61,7 @@ const ProductList = () => {
         const quantity = quantities[product.id] || 1;
         const discountedPrice = product.price * (1 - product.discountPercentage / 100);
         const totalPrice = discountedPrice * quantity;
+        const originalTotalPrice = product.price * quantity;
 
         return (
           <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
@@ -72,31 +73,31 @@ const ProductList = () => {
                 <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
               </Link>
 
-              <div className="mt-1">
+              <div className="flex justify-between items-baseline mt-1">
+                {/* Left side: Calculation */}
+                <div className="text-sm text-gray-600">
+                  {quantity > 1 && (
+                    <span>${discountedPrice.toFixed(2)} x {quantity}</span>
+                  )}
+                </div>
+
+                {/* Right side: Price */}
                 {Math.round(product.discountPercentage) > 0 ? (
-                  <div className="flex justify-end items-baseline space-x-2">
+                  <div className="flex items-baseline space-x-2">
                     <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
                       -{product.discountPercentage.toFixed(0)}%
                     </div>
                     <p className="text-lg font-bold">
-                      ${discountedPrice.toFixed(2)}
+                      ${totalPrice.toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-500 line-through">
-                      ${product.price.toFixed(2)}
+                      ${originalTotalPrice.toFixed(2)}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-lg font-bold text-right">${product.price.toFixed(2)}</p>
-                )}
-                {quantity > 1 && (
-                   <div className="flex justify-between items-center text-sm">
-                      <p className="text-gray-600">
-                        ${discountedPrice.toFixed(2)} x {quantity}
-                      </p>
-                      <p className="font-semibold text-gray-800">
-                        ${totalPrice.toFixed(2)}
-                      </p>
-                   </div>
+                  <p className="text-lg font-bold">
+                    ${totalPrice.toFixed(2)}
+                  </p>
                 )}
               </div>
 
