@@ -106,7 +106,7 @@ const ProductList = () => {
                 <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
               </Link>
             </div>
-            <div className="p-4 flex flex-col flex-grow">
+            <div className="px-4 pt-4 pb-3 flex flex-col flex-grow">
               <div className="flex justify-end items-center">
                 <div className="star-rating-wrapper" style={{ fontSize: '16px' }}>
                   <div className="stars-background">
