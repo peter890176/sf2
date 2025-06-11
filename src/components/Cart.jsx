@@ -23,19 +23,22 @@ const Cart = () => {
 
           return (
             <div key={item.id} className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold">{item.title}</h3>
-                <p className="text-sm text-gray-500">
-                  {hasDiscount ? (
-                    <>
-                      <span className="text-black-500 font-bold">${discountedPrice.toFixed(2)}</span>
-                      <span className="line-through ml-2">${item.price.toFixed(2)}</span>
-                    </>
-                  ) : (
-                    `$${item.price.toFixed(2)}`
-                  )}
-                  <span className="ml-2">x {item.quantity}</span>
-                </p>
+              <div className="flex items-center gap-4">
+                <img src={item.thumbnail} alt={item.title} className="w-16 h-16 object-cover rounded" />
+                <div>
+                  <h3 className="font-semibold">{item.title}</h3>
+                  <p className="text-sm text-gray-500">
+                    {hasDiscount ? (
+                      <>
+                        <span className="text-black-500 font-bold">${discountedPrice.toFixed(2)}</span>
+                        <span className="line-through ml-2">${item.price.toFixed(2)}</span>
+                      </>
+                    ) : (
+                      `$${item.price.toFixed(2)}`
+                    )}
+                    <span className="ml-2">x {item.quantity}</span>
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-4">
                   <p className="font-semibold">${(discountedPrice * item.quantity).toFixed(2)}</p>
