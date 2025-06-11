@@ -202,22 +202,30 @@ const ProductDetailPage = () => {
             <p className="text-gray-600 mt-4">{product?.description}</p>
           </div>
           <div className="mt-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center space-x-2">
-                <p className="text-2xl font-bold text-green-600">
-                  ${discountedPrice.toFixed(2)}
-                </p>
-                <p className="text-lg text-gray-500 line-through">
-                  ${product.price.toFixed(2)}
-                </p>
-                <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                  -{product.discountPercentage.toFixed(0)}%
+            {Math.round(product.discountPercentage) > 0 ? (
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center space-x-2">
+                  <p className="text-2xl font-bold text-green-600">
+                    ${discountedPrice.toFixed(2)}
+                  </p>
+                  <p className="text-lg text-gray-500 line-through">
+                    ${product.price.toFixed(2)}
+                  </p>
+                  <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      -{product.discountPercentage.toFixed(0)}%
+                  </div>
                 </div>
+                <p className="text-2xl font-bold text-gray-800">
+                  ${totalPrice.toFixed(2)}
+                </p>
               </div>
-              <p className="text-2xl font-bold text-gray-800">
-                ${totalPrice.toFixed(2)}
-              </p>
-            </div>
+            ) : (
+              <div className="flex justify-end items-center mb-4">
+                 <p className="text-2xl font-bold text-gray-800">
+                  ${totalPrice.toFixed(2)}
+                </p>
+              </div>
+            )}
             <p className="text-right text-sm text-gray-500 mb-2">
               x {quantity}
             </p>

@@ -73,19 +73,21 @@ const ProductList = () => {
               </Link>
 
               <div className="mt-1">
-                <div className="flex justify-end items-baseline space-x-2">
-                  {Math.round(product.discountPercentage) > 0 && (
+                {Math.round(product.discountPercentage) > 0 ? (
+                  <div className="flex justify-end items-baseline space-x-2">
                     <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
                       -{product.discountPercentage.toFixed(0)}%
                     </div>
-                  )}
-                  <p className="text-lg font-bold">
-                    ${discountedPrice.toFixed(2)}
-                  </p>
-                  <p className="text-sm text-gray-500 line-through">
-                    ${product.price.toFixed(2)}
-                  </p>
-                </div>
+                    <p className="text-lg font-bold">
+                      ${discountedPrice.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-500 line-through">
+                      ${product.price.toFixed(2)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-lg font-bold text-right">${product.price.toFixed(2)}</p>
+                )}
                 {quantity > 1 && (
                    <div className="flex justify-between items-center text-sm">
                       <p className="text-gray-600">
