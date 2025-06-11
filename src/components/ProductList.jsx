@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { Link } from 'react-router-dom';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -58,9 +59,13 @@ const ProductList = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {products.map((product) => (
         <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
-          <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-cover" />
+          <Link to={`/product/${product.id}`}>
+            <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-cover" />
+          </Link>
           <div className="p-4 flex flex-col flex-grow">
-            <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
+            <Link to={`/product/${product.id}`} className="hover:underline">
+              <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
+            </Link>
             <p className="text-gray-600 mt-1">${product.price.toFixed(2)}</p>
             <div className="mt-auto pt-4 flex items-center space-x-4">
               <div className="flex items-center rounded border border-gray-200">
