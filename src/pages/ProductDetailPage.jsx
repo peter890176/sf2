@@ -234,6 +234,11 @@ const ProductDetailPage = () => {
             {/* Details Container */}
             <div className="md:w-1/2 flex flex-col justify-between p-6">
               <div className="flex-grow">
+                {product?.brand && (
+                  <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-2">
+                    {product.brand}
+                  </p>
+                )}
                 <h1 className="text-3xl font-bold text-gray-800">{product?.title}</h1>
                 <div className="flex items-center my-2">
                   <StarRating rating={product.rating || 0} size={24} />
