@@ -123,28 +123,30 @@ const ProductList = () => {
                   <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
                 </Link>
                 <div className="flex justify-between items-baseline mt-1">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 flex flex-wrap">
                     {quantity > 1 && (
                       <span>${discountedPrice.toFixed(2)} x {quantity}</span>
                     )}
                   </div>
-                  {Math.round(product.discountPercentage) > 0 ? (
-                    <div className="flex items-baseline space-x-2">
-                      <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                        -{product.discountPercentage.toFixed(0)}%
-                      </div>
+                  <div className="flex items-baseline space-x-2 flex-wrap justify-end">
+                    {Math.round(product.discountPercentage) > 0 ? (
+                      <>
+                        <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                          -{product.discountPercentage.toFixed(0)}%
+                        </div>
+                        <p className="text-lg font-bold">
+                          ${totalPrice.toFixed(2)}
+                        </p>
+                        <p className="text-sm text-gray-500 line-through">
+                          ${originalTotalPrice.toFixed(2)}
+                        </p>
+                      </>
+                    ) : (
                       <p className="text-lg font-bold">
                         ${totalPrice.toFixed(2)}
                       </p>
-                      <p className="text-sm text-gray-500 line-through">
-                        ${originalTotalPrice.toFixed(2)}
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-lg font-bold">
-                      ${totalPrice.toFixed(2)}
-                    </p>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="mt-4">
