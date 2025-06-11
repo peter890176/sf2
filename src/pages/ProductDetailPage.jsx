@@ -6,6 +6,7 @@ import './ProductDetailPage.css';
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToCart } = useCart();
@@ -32,6 +33,7 @@ const ProductDetailPage = () => {
         }
         const data = await response.json();
         setProduct(data);
+        setCurrentImageIndex(0);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -71,6 +73,18 @@ const ProductDetailPage = () => {
     setShowMagnifier(false);
   };
 
+  const handlePrevious = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? product.images.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === product.images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity >= 1) {
       setQuantity(newQuantity);
@@ -101,6 +115,9 @@ const ProductDetailPage = () => {
 
   const totalPrice = product.price * quantity;
 
+  const selectedImage = product?.images[currentImageIndex];
+  const hasMultipleImages = product && product.images && product.images.length > 1;
+
   const lensWidth = magnifiedWidth / zoomFactor;
   const lensHeight = imgHeight / zoomFactor;
 
@@ -122,29 +139,60 @@ const ProductDetailPage = () => {
         <Link to="/" className="text-blue-500 hover:underline">&larr; 返回商品列表</Link>
       </div>
       <div className="bg-white border rounded-lg shadow-md md:flex relative">
-        <div className="md:w-1/2 relative">
-          {product && (
+        <div className="md:w-1/2 relative p-4">
+          <div className="relative mb-4">
             <img
               ref={imageRef}
-              className="w-full h-auto object-cover cursor-crosshair"
-              src={product.images[0]}
+              className="w-full h-auto object-contain cursor-crosshair"
+              src={selectedImage}
               alt={product.title}
               onMouseEnter={handleMouseEnter}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             />
-          )}
+            {hasMultipleImages && (
+              <>
+                <button
+                  onClick={handlePrevious}
+                  className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 focus:outline-none"
+                >
+                  &#10094;
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 focus:outline-none"
+                >
+                  &#10095;
+                </button>
+              </>
+            )}
 
-          <div
-            className="magnifier-lens"
-            style={{
-              display: showMagnifier ? 'block' : 'none',
-              top: `${lensTop}px`,
-              left: `${lensLeft}px`,
-              width: `${lensWidth}px`,
-              height: `${lensHeight}px`,
-            }}
-          />
+            <div
+              className="magnifier-lens"
+              style={{
+                display: showMagnifier ? 'block' : 'none',
+                top: `${lensTop}px`,
+                left: `${lensLeft}px`,
+                width: `${lensWidth}px`,
+                height: `${lensHeight}px`,
+                pointerEvents: 'none',
+              }}
+            />
+          </div>
+          
+          <div className="flex space-x-2 overflow-x-auto">
+            {product?.images?.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt={`${product.title} thumbnail ${index + 1}`}
+                className={`w-20 h-20 object-cover cursor-pointer border-2 ${
+                  currentImageIndex === index ? 'border-blue-500' : 'border-transparent'
+                }`}
+                onClick={() => setCurrentImageIndex(index)}
+              />
+            ))}
+          </div>
         </div>
         
         <div className="md:w-1/2 flex flex-col justify-between p-6">
@@ -206,7 +254,7 @@ const ProductDetailPage = () => {
                 width: '50%',
                 height: imgHeight > 0 ? `${imgHeight}px` : 'auto',
                 backgroundColor: '#fff',
-                backgroundImage: `url(${JSON.stringify(product?.images[0])})`,
+                backgroundImage: `url(${JSON.stringify(selectedImage)})`,
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: `${imgWidth * zoomFactor}px ${imgHeight * zoomFactor}px`,
                 backgroundPosition: `${backgroundPositionX}px ${backgroundPositionY}px`,

@@ -64,7 +64,7 @@ const ProductList = () => {
         return (
           <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
             <Link to={`/product/${product.id}`}>
-              <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-cover" />
+              <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
             </Link>
             <div className="p-4 flex flex-col flex-grow">
               <Link to={`/product/${product.id}`} className="hover:underline">
