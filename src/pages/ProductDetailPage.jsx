@@ -11,9 +11,9 @@ const ProductDetailPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  const [addCartNotification, setAddCartNotification] = useState('');
 
   const [showMagnifier, setShowMagnifier] = useState(false);
   const [[x, y], setXY] = useState([0, 0]);
@@ -88,18 +88,46 @@ const ProductDetailPage = () => {
   };
 
   const handleQuantityChange = (newQuantity) => {
-    if (newQuantity >= 1) {
+    if (newQuantity > product.stock) {
+      const itemInCart = cartItems.find(item => item.id === product.id);
+      const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+      let message = `庫存僅剩 ${product.stock} 件！`;
+      if (quantityInCart > 0) {
+        message += ` (購物車已有 ${quantityInCart} 件)`;
+      }
+      setAddCartNotification(message);
+      setTimeout(() => setAddCartNotification(''), 3000);
+      return; 
+    }
+
+    if (newQuantity > 0) {
       setQuantity(newQuantity);
+      if (addCartNotification) {
+        setAddCartNotification('');
+      }
     }
   };
 
   const handleAddToCart = () => {
     if (product) {
+      const itemInCart = cartItems.find(item => item.id === product.id);
+      const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+
+      if (quantityInCart + quantity > product.stock) {
+        let message = `庫存僅剩 ${product.stock} 件！`;
+        if (quantityInCart > 0) {
+            message += ` (購物車已有 ${quantityInCart} 件)`;
+        }
+        setAddCartNotification(message);
+        setTimeout(() => setAddCartNotification(''), 3000);
+        return;
+      }
+
       addToCart(product, quantity);
-      setAdded(true);
+      setAddCartNotification('成功加入購物車！');
       setTimeout(() => {
-        setAdded(false);
-      }, 1500);
+        setAddCartNotification('');
+      }, 2000);
     }
   };
 
@@ -244,36 +272,40 @@ const ProductDetailPage = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <div className="flex items-center rounded border border-gray-200">
-                      <button
-                        type="button"
-                        onClick={() => handleQuantityChange(quantity - 1)}
-                        className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                      >
-                        -
-                      </button>
-                      <div className="h-10 w-12 border-x border-gray-200 text-center flex items-center justify-center text-sm">
-                        {quantity}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleQuantityChange(quantity + 1)}
-                        className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                      >
-                        +
-                      </button>
+                  <div className="flex flex-col">
+                    <div className="flex items-center rounded border border-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => handleQuantityChange(quantity - 1)}
+                          className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                        >
+                          -
+                        </button>
+                        <div className="h-10 w-12 border-x border-gray-200 text-center flex items-center justify-center text-sm">
+                          {quantity}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleQuantityChange(quantity + 1)}
+                          className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                        >
+                          +
+                        </button>
+                    </div>
                   </div>
                   <button
                     onClick={handleAddToCart}
-                    className={`flex-grow text-white h-10 px-6 rounded transition-colors ${
-                      added
-                        ? 'bg-green-500'
-                        : 'bg-black hover:bg-gray-800'
-                    }`}
-                    disabled={added}
+                    className="flex-grow text-white h-10 px-6 rounded transition-colors bg-black hover:bg-gray-800"
                   >
-                    {added ? '已加入!' : '加入購物車'}
+                    加入購物車
                   </button>
+                </div>
+                <div className="mt-2 text-xs h-4">
+                    {addCartNotification && (
+                      <p className={addCartNotification.includes('成功') ? 'text-black' : 'text-red-500'}>
+                        {addCartNotification}
+                      </p>
+                    )}
                 </div>
               </div>
             </div>

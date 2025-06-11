@@ -7,23 +7,58 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { addToCart } = useCart();
-  const [addedId, setAddedId] = useState(null);
+  const { addToCart, cartItems } = useCart();
   const [quantities, setQuantities] = useState({});
+  const [addCartNotifications, setAddCartNotifications] = useState({});
 
   const handleQuantityChange = (productId, newQuantity) => {
-    if (newQuantity >= 1) {
-      setQuantities((prev) => ({ ...prev, [productId]: newQuantity }));
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    if (newQuantity > product.stock) {
+      const itemInCart = cartItems.find(item => item.id === productId);
+      const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+      let message = `庫存僅剩 ${product.stock} 件！`;
+      if (quantityInCart > 0) {
+        message += ` (購物車已有 ${quantityInCart} 件)`;
+      }
+      setAddCartNotifications(prev => ({ ...prev, [productId]: message }));
+      setTimeout(() => {
+        setAddCartNotifications(prev => ({ ...prev, [productId]: '' }));
+      }, 3000);
+      return;
+    }
+    
+    if (newQuantity > 0) {
+        setQuantities(prev => ({ ...prev, [productId]: newQuantity }));
+        if (addCartNotifications[productId]) {
+            setAddCartNotifications(prev => ({ ...prev, [productId]: '' }));
+        }
     }
   };
 
   const handleAddToCart = (product) => {
-    const quantity = quantities[product.id] || 1;
-    addToCart(product, quantity);
-    setAddedId(product.id);
+    const quantityToAdd = quantities[product.id] || 1;
+    const itemInCart = cartItems.find(item => item.id === product.id);
+    const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+
+    if (quantityInCart + quantityToAdd > product.stock) {
+      let message = `庫存僅剩 ${product.stock} 件！`;
+      if (quantityInCart > 0) {
+        message += ` (購物車已有 ${quantityInCart} 件)`;
+      }
+      setAddCartNotifications(prev => ({ ...prev, [product.id]: message }));
+      setTimeout(() => {
+        setAddCartNotifications(prev => ({ ...prev, [product.id]: '' }));
+      }, 3000);
+      return;
+    }
+
+    addToCart(product, quantityToAdd);
+    setAddCartNotifications(prev => ({ ...prev, [product.id]: '成功加入購物車！' }));
     setTimeout(() => {
-      setAddedId(null);
-    }, 1000); // Display message for 1 second
+      setAddCartNotifications(prev => ({ ...prev, [product.id]: '' }));
+    }, 2000);
   };
 
   useEffect(() => {
@@ -115,37 +150,41 @@ const ProductList = () => {
                 )}
               </div>
 
-              <div className="mt-auto pt-4 flex items-center space-x-4">
-                <div className="flex items-center rounded border border-gray-200">
-                  <button
-                    type="button"
-                    onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
-                    className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                  >
-                    -
-                  </button>
-                  <div className="h-8 w-10 border-x border-gray-200 text-center flex items-center justify-center text-sm">
-                    {quantities[product.id] || 1}
+              <div className="mt-auto pt-4">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center rounded border border-gray-200">
+                    <button
+                      type="button"
+                      onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
+                      className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                    >
+                      -
+                    </button>
+                    <div className="h-8 w-10 border-x border-gray-200 text-center flex items-center justify-center text-sm">
+                      {quantities[product.id] || 1}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
+                      className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                    >
+                      +
+                    </button>
                   </div>
                   <button
-                    type="button"
-                    onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
-                    className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                    onClick={() => handleAddToCart(product)}
+                    className="flex-grow text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800"
                   >
-                    +
+                    加入購物車
                   </button>
                 </div>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className={`flex-grow text-white h-8 px-4 rounded transition-colors ${
-                    addedId === product.id
-                      ? 'bg-green-500'
-                      : 'bg-black hover:bg-gray-800'
-                  }`}
-                  disabled={addedId === product.id}
-                >
-                  {addedId === product.id ? '已加入!' : '加入購物車'}
-                </button>
+                <div className="text-xs h-4 mt-1 text-center">
+                  {addCartNotifications[product.id] && (
+                    <p className={addCartNotifications[product.id].includes('成功') ? 'text-black' : 'text-red-500'}>
+                      {addCartNotifications[product.id]}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
