@@ -59,7 +59,8 @@ const ProductList = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {products.map((product) => {
         const quantity = quantities[product.id] || 1;
-        const totalPrice = product.price * quantity;
+        const discountedPrice = product.price * (1 - product.discountPercentage / 100);
+        const totalPrice = discountedPrice * quantity;
 
         return (
           <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
@@ -70,18 +71,33 @@ const ProductList = () => {
               <Link to={`/product/${product.id}`} className="hover:underline">
                 <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
               </Link>
-              {quantity > 1 ? (
-                <div className="flex justify-between items-center mt-1">
-                  <p className="text-sm text-gray-600">
-                    ${product.price.toFixed(2)} x {quantity}
+
+              <div className="mt-1">
+                <div className="flex justify-end items-baseline space-x-2">
+                  {Math.round(product.discountPercentage) > 0 && (
+                    <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      -{product.discountPercentage.toFixed(0)}%
+                    </div>
+                  )}
+                  <p className="text-lg font-bold">
+                    ${discountedPrice.toFixed(2)}
                   </p>
-                  <p className="text-base font-bold text-gray-800">
-                    ${totalPrice.toFixed(2)}
+                  <p className="text-sm text-gray-500 line-through">
+                    ${product.price.toFixed(2)}
                   </p>
                 </div>
-              ) : (
-                <p className="text-gray-600 mt-1 text-right">${product.price.toFixed(2)}</p>
-              )}
+                {quantity > 1 && (
+                   <div className="flex justify-between items-center text-sm">
+                      <p className="text-gray-600">
+                        ${discountedPrice.toFixed(2)} x {quantity}
+                      </p>
+                      <p className="font-semibold text-gray-800">
+                        ${totalPrice.toFixed(2)}
+                      </p>
+                   </div>
+                )}
+              </div>
+
               <div className="mt-auto pt-4 flex items-center space-x-4">
                 <div className="flex items-center rounded border border-gray-200">
                   <button

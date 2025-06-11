@@ -113,7 +113,8 @@ const ProductDetailPage = () => {
     return <p className="text-center text-gray-500">找不到商品</p>;
   }
 
-  const totalPrice = product.price * quantity;
+  const discountedPrice = product.price * (1 - product.discountPercentage / 100);
+  const totalPrice = discountedPrice * quantity;
 
   const selectedImage = product?.images[currentImageIndex];
   const hasMultipleImages = product && product.images && product.images.length > 1;
@@ -202,13 +203,24 @@ const ProductDetailPage = () => {
           </div>
           <div className="mt-6">
             <div className="flex justify-between items-center mb-4">
-              <p className="text-xl text-gray-700">
-                ${product?.price.toFixed(2)} x {quantity}
-              </p>
+              <div className="flex items-center space-x-2">
+                <p className="text-2xl font-bold text-green-600">
+                  ${discountedPrice.toFixed(2)}
+                </p>
+                <p className="text-lg text-gray-500 line-through">
+                  ${product.price.toFixed(2)}
+                </p>
+                <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                  -{product.discountPercentage.toFixed(0)}%
+                </div>
+              </div>
               <p className="text-2xl font-bold text-gray-800">
                 ${totalPrice.toFixed(2)}
               </p>
             </div>
+            <p className="text-right text-sm text-gray-500 mb-2">
+              x {quantity}
+            </p>
             <div className="flex items-center space-x-4">
               <div className="flex items-center rounded border border-gray-200">
                   <button
