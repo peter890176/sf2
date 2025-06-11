@@ -1,8 +1,30 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, getCartTotal } = useCart();
+  const { cartItems, removeFromCart, getCartTotal, clearCart } = useCart();
+  const [isConfirmingClear, setIsConfirmingClear] = useState(false);
+  const confirmTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    // Cleanup the timeout when the component unmounts
+    return () => {
+      clearTimeout(confirmTimeoutRef.current);
+    };
+  }, []);
+
+  const handleClearCart = () => {
+    if (isConfirmingClear) {
+      clearTimeout(confirmTimeoutRef.current);
+      clearCart();
+      setIsConfirmingClear(false);
+    } else {
+      setIsConfirmingClear(true);
+      confirmTimeoutRef.current = setTimeout(() => {
+        setIsConfirmingClear(false);
+      }, 3000); // 3 seconds to confirm
+    }
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -15,7 +37,19 @@ const Cart = () => {
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">購物車</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">購物車</h2>
+        <button 
+          onClick={handleClearCart}
+          className={`text-sm font-semibold transition-all duration-200 ${
+            isConfirmingClear 
+              ? 'bg-red-600 text-white rounded px-3 py-1' 
+              : 'text-red-500 hover:text-red-700'
+          }`}
+        >
+          {isConfirmingClear ? '確認清空？' : '清空'}
+        </button>
+      </div>
       <div className="space-y-4">
         {cartItems.map((item) => {
           const hasDiscount = Math.round(item.discountPercentage) > 0;
