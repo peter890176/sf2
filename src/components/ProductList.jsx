@@ -10,6 +10,7 @@ const ProductList = () => {
   const { addToCart, cartItems } = useCart();
   const [quantities, setQuantities] = useState({});
   const [addCartNotifications, setAddCartNotifications] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const handleQuantityChange = (productId, newQuantity) => {
     const product = products.find(p => p.id === productId);
@@ -91,104 +92,127 @@ const ProductList = () => {
     return <p className="text-center text-red-500">錯誤: {error}</p>;
   }
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {products.map((product) => {
-        const quantity = quantities[product.id] || 1;
-        const discountedPrice = product.price * (1 - product.discountPercentage / 100);
-        const totalPrice = discountedPrice * quantity;
-        const originalTotalPrice = product.price * quantity;
+  const categories = ['All', ...new Set(products.map(p => p.category))];
 
-        return (
-          <div key={product.id} className="@container bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
-            <div className="relative">
-              <Link to={`/product/${product.id}`}>
-                <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
-              </Link>
-            </div>
-            <div className="px-4 pt-4 pb-3 flex flex-col flex-grow">
-              <div className="flex justify-end items-center">
-                <div className="star-rating-wrapper" style={{ fontSize: '16px' }}>
-                  <div className="stars-background">
-                    <span>★</span>
-                  </div>
-                  <div className="stars-foreground" style={{ width: `${(product.rating / 5) * 100}%` }}>
-                    <span>★</span>
-                  </div>
-                </div>
-                <span className="ml-1 text-sm font-bold text-black">{product.rating.toFixed(1)}</span>
-              </div>
-              <div className="flex-grow">
-                <Link to={`/product/${product.id}`} className="hover:underline">
-                  <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
+  const filteredProducts = selectedCategory === 'All'
+    ? products
+    : products.filter(p => p.category === selectedCategory);
+
+  return (
+    <div>
+      <div className="flex justify-center flex-wrap gap-2 mb-8">
+        {categories.map(category => (
+          <button
+            key={category}
+            onClick={() => setSelectedCategory(category)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors capitalize ${
+              selectedCategory === category
+                ? 'bg-black text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            {category.replace(/-/g, ' ')}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filteredProducts.map((product) => {
+          const quantity = quantities[product.id] || 1;
+          const discountedPrice = product.price * (1 - product.discountPercentage / 100);
+          const totalPrice = discountedPrice * quantity;
+          const originalTotalPrice = product.price * quantity;
+
+          return (
+            <div key={product.id} className="@container bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
+              <div className="relative">
+                <Link to={`/product/${product.id}`}>
+                  <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
                 </Link>
-                <div className="flex justify-between items-baseline mt-1">
-                  <div className="text-sm text-gray-600 flex flex-wrap">
-                    {quantity > 1 && (
-                      <span>${discountedPrice.toFixed(2)} x {quantity}</span>
-                    )}
+              </div>
+              <div className="px-4 pt-4 pb-3 flex flex-col flex-grow">
+                <div className="flex justify-end items-center">
+                  <div className="star-rating-wrapper" style={{ fontSize: '16px' }}>
+                    <div className="stars-background">
+                      <span>★</span>
+                    </div>
+                    <div className="stars-foreground" style={{ width: `${(product.rating / 5) * 100}%` }}>
+                      <span>★</span>
+                    </div>
                   </div>
-                  <div className="flex items-baseline space-x-2 flex-wrap justify-end">
-                    {Math.round(product.discountPercentage) > 0 ? (
-                      <>
-                        <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                          -{product.discountPercentage.toFixed(0)}%
-                        </div>
+                  <span className="ml-1 text-sm font-bold text-black">{product.rating.toFixed(1)}</span>
+                </div>
+                <div className="flex-grow">
+                  <Link to={`/product/${product.id}`} className="hover:underline">
+                    <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
+                  </Link>
+                  <div className="flex justify-between items-baseline mt-1">
+                    <div className="text-sm text-gray-600 flex flex-wrap">
+                      {quantity > 1 && (
+                        <span>${discountedPrice.toFixed(2)} x {quantity}</span>
+                      )}
+                    </div>
+                    <div className="flex items-baseline space-x-2 flex-wrap justify-end">
+                      {Math.round(product.discountPercentage) > 0 ? (
+                        <>
+                          <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                            -{product.discountPercentage.toFixed(0)}%
+                          </div>
+                          <p className="text-lg font-bold">
+                            ${totalPrice.toFixed(2)}
+                          </p>
+                          <p className="text-sm text-gray-500 line-through">
+                            ${originalTotalPrice.toFixed(2)}
+                          </p>
+                        </>
+                      ) : (
                         <p className="text-lg font-bold">
                           ${totalPrice.toFixed(2)}
                         </p>
-                        <p className="text-sm text-gray-500 line-through">
-                          ${originalTotalPrice.toFixed(2)}
-                        </p>
-                      </>
-                    ) : (
-                      <p className="text-lg font-bold">
-                        ${totalPrice.toFixed(2)}
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <div className="flex flex-col @[15rem]:flex-row items-center space-y-2 @[15rem]:space-y-0 @[15rem]:space-x-4">
+                    <div className="flex items-center rounded border border-gray-200 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
+                        className="h-8 w-7 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                      >
+                        -
+                      </button>
+                      <div className="h-8 w-8 border-x border-gray-200 text-center flex items-center justify-center text-sm">
+                        {quantities[product.id] || 1}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
+                        className="h-8 w-7 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="flex-grow @[15rem]:w-auto text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800 whitespace-nowrap"
+                    >
+                      加入購物車
+                    </button>
+                  </div>
+                  <div className="text-xs h-4 mt-1 text-center">
+                    {addCartNotifications[product.id] && (
+                      <p className={addCartNotifications[product.id].includes('成功') ? 'text-black' : 'text-red-500'}>
+                        {addCartNotifications[product.id]}
                       </p>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="mt-4">
-                <div className="flex flex-col @[15rem]:flex-row items-center space-y-2 @[15rem]:space-y-0 @[15rem]:space-x-4">
-                  <div className="flex items-center rounded border border-gray-200 flex-shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
-                      className="h-8 w-7 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                    >
-                      -
-                    </button>
-                    <div className="h-8 w-8 border-x border-gray-200 text-center flex items-center justify-center text-sm">
-                      {quantities[product.id] || 1}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
-                      className="h-8 w-7 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="flex-grow @[15rem]:w-auto text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800 whitespace-nowrap"
-                  >
-                    加入購物車
-                  </button>
-                </div>
-                <div className="text-xs h-4 mt-1 text-center">
-                  {addCartNotifications[product.id] && (
-                    <p className={addCartNotifications[product.id].includes('成功') ? 'text-black' : 'text-red-500'}>
-                      {addCartNotifications[product.id]}
-                    </p>
-                  )}
-                </div>
-              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

@@ -169,6 +169,19 @@ const ProductDetailPage = () => {
     <div className="w-full px-8 py-4">
       <div className="mb-4">
         <Link to="/" className="text-blue-500 hover:underline">&larr; 返回商品列表</Link>
+        <nav className="mt-2 text-sm text-gray-500" aria-label="Breadcrumb">
+          <ol className="inline-flex items-center space-x-1">
+            <li>
+              <Link to="/" className="hover:underline">首頁</Link>
+            </li>
+            <li aria-current="page">
+              <div className="flex items-center">
+                <span className="mx-1">/</span>
+                <span className="font-medium text-gray-700">{product?.category}</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Left Part: Image and Details */}
