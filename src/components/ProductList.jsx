@@ -57,51 +57,67 @@ const ProductList = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {products.map((product) => (
-        <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
-          <Link to={`/product/${product.id}`}>
-            <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-cover" />
-          </Link>
-          <div className="p-4 flex flex-col flex-grow">
-            <Link to={`/product/${product.id}`} className="hover:underline">
-              <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
+      {products.map((product) => {
+        const quantity = quantities[product.id] || 1;
+        const totalPrice = product.price * quantity;
+
+        return (
+          <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
+            <Link to={`/product/${product.id}`}>
+              <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-cover" />
             </Link>
-            <p className="text-gray-600 mt-1">${product.price.toFixed(2)}</p>
-            <div className="mt-auto pt-4 flex items-center space-x-4">
-              <div className="flex items-center rounded border border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
-                  className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                >
-                  -
-                </button>
-                <div className="h-8 w-10 border-x border-gray-200 text-center flex items-center justify-center text-sm">
-                  {quantities[product.id] || 1}
+            <div className="p-4 flex flex-col flex-grow">
+              <Link to={`/product/${product.id}`} className="hover:underline">
+                <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
+              </Link>
+              {quantity > 1 ? (
+                <div className="flex justify-between items-center mt-1">
+                  <p className="text-sm text-gray-600">
+                    ${product.price.toFixed(2)} x {quantity}
+                  </p>
+                  <p className="text-base font-bold text-gray-800">
+                    ${totalPrice.toFixed(2)}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-gray-600 mt-1 text-right">${product.price.toFixed(2)}</p>
+              )}
+              <div className="mt-auto pt-4 flex items-center space-x-4">
+                <div className="flex items-center rounded border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
+                    className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                  >
+                    -
+                  </button>
+                  <div className="h-8 w-10 border-x border-gray-200 text-center flex items-center justify-center text-sm">
+                    {quantities[product.id] || 1}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
+                    className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                  >
+                    +
+                  </button>
                 </div>
                 <button
-                  type="button"
-                  onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
-                  className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                  onClick={() => handleAddToCart(product)}
+                  className={`flex-grow text-white h-8 px-4 rounded transition-colors ${
+                    addedId === product.id
+                      ? 'bg-green-500'
+                      : 'bg-black hover:bg-gray-800'
+                  }`}
+                  disabled={addedId === product.id}
                 >
-                  +
+                  {addedId === product.id ? '已加入!' : '加入購物車'}
                 </button>
               </div>
-              <button
-                onClick={() => handleAddToCart(product)}
-                className={`flex-grow text-white h-8 px-4 rounded transition-colors ${
-                  addedId === product.id
-                    ? 'bg-green-500'
-                    : 'bg-black hover:bg-gray-800'
-                }`}
-                disabled={addedId === product.id}
-              >
-                {addedId === product.id ? '已加入!' : '加入購物車'}
-              </button>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

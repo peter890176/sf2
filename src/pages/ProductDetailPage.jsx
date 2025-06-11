@@ -99,6 +99,8 @@ const ProductDetailPage = () => {
     return <p className="text-center text-gray-500">找不到商品</p>;
   }
 
+  const totalPrice = product.price * quantity;
+
   const lensWidth = magnifiedWidth / zoomFactor;
   const lensHeight = imgHeight / zoomFactor;
 
@@ -148,40 +150,49 @@ const ProductDetailPage = () => {
         <div className="md:w-1/2 flex flex-col justify-between p-6">
           <div className="flex-grow">
             <h1 className="text-3xl font-bold text-gray-800">{product?.title}</h1>
-            <p className="text-xl text-gray-700 mt-2">${product?.price.toFixed(2)}</p>
             <p className="text-gray-600 mt-4">{product?.description}</p>
           </div>
-          <div className="mt-6 flex items-center space-x-4">
-            <div className="flex items-center rounded border border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                  className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                >
-                  -
-                </button>
-                <div className="h-10 w-12 border-x border-gray-200 text-center flex items-center justify-center text-sm">
-                  {quantity}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleQuantityChange(quantity + 1)}
-                  className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
-                >
-                  +
-                </button>
+          <div className="mt-6">
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-xl text-gray-700">
+                ${product?.price.toFixed(2)} x {quantity}
+              </p>
+              <p className="text-2xl font-bold text-gray-800">
+                ${totalPrice.toFixed(2)}
+              </p>
             </div>
-            <button
-              onClick={handleAddToCart}
-              className={`flex-grow text-white h-10 px-6 rounded transition-colors ${
-                added
-                  ? 'bg-green-500'
-                  : 'bg-black hover:bg-gray-800'
-              }`}
-              disabled={added}
-            >
-              {added ? '已加入!' : '加入購物車'}
-            </button>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center rounded border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => handleQuantityChange(quantity - 1)}
+                    className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                  >
+                    -
+                  </button>
+                  <div className="h-10 w-12 border-x border-gray-200 text-center flex items-center justify-center text-sm">
+                    {quantity}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleQuantityChange(quantity + 1)}
+                    className="h-10 w-10 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                  >
+                    +
+                  </button>
+              </div>
+              <button
+                onClick={handleAddToCart}
+                className={`flex-grow text-white h-10 px-6 rounded transition-colors ${
+                  added
+                    ? 'bg-green-500'
+                    : 'bg-black hover:bg-gray-800'
+                }`}
+                disabled={added}
+              >
+                {added ? '已加入!' : '加入購物車'}
+              </button>
+            </div>
           </div>
         </div>
 
