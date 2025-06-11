@@ -50,7 +50,7 @@ const Cart = () => {
           {isConfirmingClear ? '確認清空？' : '清空'}
         </button>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
         {cartItems.map((item) => {
           const hasDiscount = Math.round(item.discountPercentage) > 0;
           const discountedPrice = item.price * (1 - item.discountPercentage / 100);
