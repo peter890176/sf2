@@ -100,7 +100,7 @@ const ProductList = () => {
         const originalTotalPrice = product.price * quantity;
 
         return (
-          <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
+          <div key={product.id} className="@container bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
             <div className="relative">
               <Link to={`/product/${product.id}`}>
                 <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
@@ -151,8 +151,8 @@ const ProductList = () => {
               </div>
 
               <div className="mt-auto pt-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center rounded border border-gray-200">
+                <div className="flex flex-col @[15rem]:flex-row items-center space-y-2 @[15rem]:space-y-0 @[15rem]:space-x-4">
+                  <div className="flex items-center rounded border border-gray-200 flex-shrink-0">
                     <button
                       type="button"
                       onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
@@ -173,7 +173,7 @@ const ProductList = () => {
                   </div>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="flex-grow text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800"
+                    className="flex-grow w-full @[15rem]:w-auto text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800 whitespace-nowrap"
                   >
                     加入購物車
                   </button>

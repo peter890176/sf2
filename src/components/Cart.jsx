@@ -22,15 +22,15 @@ const Cart = () => {
           const discountedPrice = item.price * (1 - item.discountPercentage / 100);
 
           return (
-            <div key={item.id} className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <img src={item.thumbnail} alt={item.title} className="w-16 h-16 object-cover rounded" />
-                <div>
-                  <h3 className="font-semibold">{item.title}</h3>
+            <div key={item.id} className="flex justify-between items-center gap-4">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <img src={item.thumbnail} alt={item.title} className="w-16 h-16 object-cover rounded flex-shrink-0" />
+                <div className="min-w-0">
+                  <h3 className="font-semibold truncate">{item.title}</h3>
                   <p className="text-sm text-gray-500">
                     {hasDiscount ? (
                       <>
-                        <span className="text-black-500 font-bold">${discountedPrice.toFixed(2)}</span>
+                        <span className="text-black font-bold">${discountedPrice.toFixed(2)}</span>
                         <span className="line-through ml-2">${item.price.toFixed(2)}</span>
                       </>
                     ) : (
@@ -40,8 +40,8 @@ const Cart = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                  <p className="font-semibold">${(discountedPrice * item.quantity).toFixed(2)}</p>
+              <div className="flex items-center gap-4 flex-shrink-0">
+                  <p className="font-semibold w-24 text-right">${(discountedPrice * item.quantity).toFixed(2)}</p>
                   <button
                       onClick={() => removeFromCart(item.id)}
                       className="text-red-500 hover:text-red-700 font-bold"
