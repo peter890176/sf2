@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
+import './StarRating.css'; // Import the styles directly
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -65,9 +66,22 @@ const ProductList = () => {
 
         return (
           <div key={product.id} className="bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
-            <Link to={`/product/${product.id}`}>
-              <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
-            </Link>
+            <div className="relative">
+              <Link to={`/product/${product.id}`}>
+                <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
+              </Link>
+              <div className="absolute bottom-2 right-2 flex items-center">
+                <div className="star-rating-wrapper" style={{ fontSize: '16px' }}>
+                  <div className="stars-background">
+                    <span>★</span>
+                  </div>
+                  <div className="stars-foreground" style={{ width: `${(product.rating / 5) * 100}%` }}>
+                    <span>★</span>
+                  </div>
+                </div>
+                <span className="ml-1 text-sm font-bold text-black">{product.rating.toFixed(1)}</span>
+              </div>
+            </div>
             <div className="p-4 flex flex-col flex-grow">
               <Link to={`/product/${product.id}`} className="hover:underline">
                 <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>

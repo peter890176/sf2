@@ -1,0 +1,41 @@
+.star-rating {
+    display: inline-flex;
+  }
+  
+  .star {
+    position: relative;
+    font-size: 1.5rem; /* Default star size, can be overridden by props */
+    color: #ccc; /* Empty star color */
+  }
+  
+  .star-filled {
+    color: #ffd700; /* Filled star color */
+  }
+  
+  .star-half .star-filled {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
+  }
+
+  /* Styles for the single percentage-filled star in ProductList */
+  .star-rating-wrapper {
+    position: relative;
+    display: inline-block;
+    line-height: 1; /* Ensure stars are tightly packed */
+  }
+
+  .stars-background {
+    color: #ccc; /* Light gray for the empty part of the star */
+  }
+
+  .stars-foreground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #ffd700;
+  } 

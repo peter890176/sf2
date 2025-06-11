@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import Cart from '../components/Cart';
+import StarRating from '../components/StarRating';
 import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
@@ -144,8 +145,9 @@ const ProductDetailPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Left Part: Image and Details */}
         <div className="md:col-span-3">
-          <div className="bg-white border rounded-lg shadow-md md:flex relative">
-            <div className="md:w-1/2 relative p-4">
+          <div className="bg-white border rounded-lg shadow-md md:flex relative h-full">
+            {/* Image Container */}
+            <div className="md:w-1/2 relative p-4 flex flex-col">
               <div className="relative mb-4">
                 <img
                   ref={imageRef}
@@ -201,9 +203,14 @@ const ProductDetailPage = () => {
               </div>
             </div>
             
+            {/* Details Container */}
             <div className="md:w-1/2 flex flex-col justify-between p-6">
               <div className="flex-grow">
                 <h1 className="text-3xl font-bold text-gray-800">{product?.title}</h1>
+                <div className="flex items-center my-2">
+                  <StarRating rating={product.rating || 0} size={24} />
+                  <span className="ml-2 text-gray-600">({product.rating.toFixed(2)})</span>
+                </div>
                 <p className="text-gray-600 mt-4">{product?.description}</p>
               </div>
               <div className="mt-6">

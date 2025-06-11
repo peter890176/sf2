@@ -8,4 +8,9 @@
   background-color: rgba(255, 255, 255, 0.3);
   pointer-events: none;
   /* The size of the lens will be set dynamically */
+}
+
+/* Fix for react-simple-star-rating vertical stacking */
+.rating-container span {
+  display: inline-flex !important;
 } 
