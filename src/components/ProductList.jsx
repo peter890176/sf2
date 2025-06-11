@@ -105,7 +105,9 @@ const ProductList = () => {
               <Link to={`/product/${product.id}`}>
                 <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
               </Link>
-              <div className="absolute bottom-2 right-2 flex items-center">
+            </div>
+            <div className="p-4 flex flex-col flex-grow">
+              <div className="flex justify-end items-center">
                 <div className="star-rating-wrapper" style={{ fontSize: '16px' }}>
                   <div className="stars-background">
                     <span>★</span>
@@ -116,64 +118,59 @@ const ProductList = () => {
                 </div>
                 <span className="ml-1 text-sm font-bold text-black">{product.rating.toFixed(1)}</span>
               </div>
-            </div>
-            <div className="p-4 flex flex-col flex-grow">
-              <Link to={`/product/${product.id}`} className="hover:underline">
-                <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
-              </Link>
-
-              <div className="flex justify-between items-baseline mt-1">
-                {/* Left side: Calculation */}
-                <div className="text-sm text-gray-600">
-                  {quantity > 1 && (
-                    <span>${discountedPrice.toFixed(2)} x {quantity}</span>
-                  )}
-                </div>
-
-                {/* Right side: Price */}
-                {Math.round(product.discountPercentage) > 0 ? (
-                  <div className="flex items-baseline space-x-2">
-                    <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                      -{product.discountPercentage.toFixed(0)}%
+              <div className="flex-grow">
+                <Link to={`/product/${product.id}`} className="hover:underline">
+                  <h2 className="text-lg font-semibold text-gray-800 truncate">{product.title}</h2>
+                </Link>
+                <div className="flex justify-between items-baseline mt-1">
+                  <div className="text-sm text-gray-600">
+                    {quantity > 1 && (
+                      <span>${discountedPrice.toFixed(2)} x {quantity}</span>
+                    )}
+                  </div>
+                  {Math.round(product.discountPercentage) > 0 ? (
+                    <div className="flex items-baseline space-x-2">
+                      <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                        -{product.discountPercentage.toFixed(0)}%
+                      </div>
+                      <p className="text-lg font-bold">
+                        ${totalPrice.toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-500 line-through">
+                        ${originalTotalPrice.toFixed(2)}
+                      </p>
                     </div>
+                  ) : (
                     <p className="text-lg font-bold">
                       ${totalPrice.toFixed(2)}
                     </p>
-                    <p className="text-sm text-gray-500 line-through">
-                      ${originalTotalPrice.toFixed(2)}
-                    </p>
-                  </div>
-                ) : (
-                  <p className="text-lg font-bold">
-                    ${totalPrice.toFixed(2)}
-                  </p>
-                )}
+                  )}
+                </div>
               </div>
-
-              <div className="mt-auto pt-4">
+              <div className="mt-4">
                 <div className="flex flex-col @[15rem]:flex-row items-center space-y-2 @[15rem]:space-y-0 @[15rem]:space-x-4">
                   <div className="flex items-center rounded border border-gray-200 flex-shrink-0">
                     <button
                       type="button"
                       onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) - 1)}
-                      className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                      className="h-8 w-7 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
                     >
                       -
                     </button>
-                    <div className="h-8 w-10 border-x border-gray-200 text-center flex items-center justify-center text-sm">
+                    <div className="h-8 w-8 border-x border-gray-200 text-center flex items-center justify-center text-sm">
                       {quantities[product.id] || 1}
                     </div>
                     <button
                       type="button"
                       onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
-                      className="h-8 w-8 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
+                      className="h-8 w-7 text-xl text-gray-600 transition hover:opacity-75 flex items-center justify-center"
                     >
                       +
                     </button>
                   </div>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="flex-grow w-full @[15rem]:w-auto text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800 whitespace-nowrap"
+                    className="flex-grow @[15rem]:w-auto text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800 whitespace-nowrap"
                   >
                     加入購物車
                   </button>
