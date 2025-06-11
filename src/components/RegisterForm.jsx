@@ -15,19 +15,19 @@ const RegisterForm = () => {
     const newErrors = {};
     // Username: at least 3 characters
     if (formData.username.length < 3) {
-      newErrors.username = '用戶名至少需要 3 個字元';
+      newErrors.username = 'Username must be at least 3 characters long';
     }
     // Email: valid format
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = '請輸入有效的電子郵件地址';
+      newErrors.email = 'Please enter a valid email address';
     }
     // Password: at least 8 chars, one uppercase, one lowercase, one number
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(formData.password)) {
-      newErrors.password = '密碼需至少 8 個字元，且包含大小寫字母和數字';
+      newErrors.password = 'Password must be at least 8 characters long and include uppercase, lowercase, and a number';
     }
     // Confirm Password: must match password
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = '兩次輸入的密碼不相符';
+      newErrors.confirmPassword = 'Passwords do not match';
     }
     return newErrors;
   };
@@ -54,16 +54,16 @@ const RegisterForm = () => {
     <div className="max-w-md mx-auto">
       {submitted ? (
         <div className="text-center text-green-600">
-          <h2 className="text-2xl font-bold">註冊成功！</h2>
-          <p>感謝您的註冊。</p>
+          <h2 className="text-2xl font-bold">Registration Successful!</h2>
+          <p>Thank you for registering.</p>
         </div>
       ) : (
         <>
-          <h1 className="text-3xl font-bold mb-6 text-gray-800">建立帳戶</h1>
+          <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Account</h1>
           <form onSubmit={handleSubmit} noValidate>
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2" htmlFor="username">
-                用戶名
+                Username
               </label>
               <input
                 type="text"
@@ -78,7 +78,7 @@ const RegisterForm = () => {
 
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2" htmlFor="email">
-                電子郵件
+                Email
               </label>
               <input
                 type="email"
@@ -93,7 +93,7 @@ const RegisterForm = () => {
 
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2" htmlFor="password">
-                密碼
+                Password
               </label>
               <input
                 type="password"
@@ -108,7 +108,7 @@ const RegisterForm = () => {
 
             <div className="mb-6">
               <label className="block text-gray-700 font-bold mb-2" htmlFor="confirmPassword">
-                確認密碼
+                Confirm Password
               </label>
               <input
                 type="password"
@@ -125,7 +125,7 @@ const RegisterForm = () => {
               type="submit"
               className="w-full bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-black transition-colors"
             >
-              建立帳戶
+              Create Account
             </button>
           </form>
         </>

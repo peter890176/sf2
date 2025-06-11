@@ -19,9 +19,9 @@ const ProductList = () => {
     if (newQuantity > product.stock) {
       const itemInCart = cartItems.find(item => item.id === productId);
       const quantityInCart = itemInCart ? itemInCart.quantity : 0;
-      let message = `庫存僅剩 ${product.stock} 件！`;
+      let message = `Only ${product.stock} left in stock!`;
       if (quantityInCart > 0) {
-        message += ` (購物車已有 ${quantityInCart} 件)`;
+        message += ` (${quantityInCart} in cart)`;
       }
       setAddCartNotifications(prev => ({ ...prev, [productId]: message }));
       setTimeout(() => {
@@ -44,9 +44,9 @@ const ProductList = () => {
     const quantityInCart = itemInCart ? itemInCart.quantity : 0;
 
     if (quantityInCart + quantityToAdd > product.stock) {
-      let message = `庫存僅剩 ${product.stock} 件！`;
+      let message = `Only ${product.stock} left in stock!`;
       if (quantityInCart > 0) {
-        message += ` (購物車已有 ${quantityInCart} 件)`;
+        message += ` (${quantityInCart} in cart)`;
       }
       setAddCartNotifications(prev => ({ ...prev, [product.id]: message }));
       setTimeout(() => {
@@ -56,7 +56,7 @@ const ProductList = () => {
     }
 
     addToCart(product, quantityToAdd);
-    setAddCartNotifications(prev => ({ ...prev, [product.id]: '成功加入購物車！' }));
+    setAddCartNotifications(prev => ({ ...prev, [product.id]: 'Added to cart!' }));
     setTimeout(() => {
       setAddCartNotifications(prev => ({ ...prev, [product.id]: '' }));
     }, 2000);
@@ -85,11 +85,11 @@ const ProductList = () => {
   }, []);
 
   if (loading) {
-    return <p className="text-center text-gray-500">載入中...</p>;
+    return <p className="text-center text-gray-500">Loading...</p>;
   }
 
   if (error) {
-    return <p className="text-center text-red-500">錯誤: {error}</p>;
+    return <p className="text-center text-red-500">Error: {error}</p>;
   }
 
   const categories = ['All', ...new Set(products.map(p => p.category))];
@@ -197,12 +197,12 @@ const ProductList = () => {
                       onClick={() => handleAddToCart(product)}
                       className="flex-grow @[15rem]:w-auto text-white h-8 px-4 rounded transition-colors bg-black hover:bg-gray-800 whitespace-nowrap"
                     >
-                      加入購物車
+                      {addCartNotifications[product.id] ? '✓' : 'Add to Cart'}
                     </button>
                   </div>
                   <div className="text-xs h-4 mt-1 text-center">
                     {addCartNotifications[product.id] && (
-                      <p className={addCartNotifications[product.id].includes('成功') ? 'text-black' : 'text-red-500'}>
+                      <p className={addCartNotifications[product.id].includes('Added') ? 'text-black' : 'text-red-500'}>
                         {addCartNotifications[product.id]}
                       </p>
                     )}

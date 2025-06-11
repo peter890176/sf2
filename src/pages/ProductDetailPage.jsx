@@ -91,9 +91,9 @@ const ProductDetailPage = () => {
     if (newQuantity > product.stock) {
       const itemInCart = cartItems.find(item => item.id === product.id);
       const quantityInCart = itemInCart ? itemInCart.quantity : 0;
-      let message = `庫存僅剩 ${product.stock} 件！`;
+      let message = `Only ${product.stock} left in stock!`;
       if (quantityInCart > 0) {
-        message += ` (購物車已有 ${quantityInCart} 件)`;
+        message += ` (${quantityInCart} in cart)`;
       }
       setAddCartNotification(message);
       setTimeout(() => setAddCartNotification(''), 3000);
@@ -114,9 +114,9 @@ const ProductDetailPage = () => {
       const quantityInCart = itemInCart ? itemInCart.quantity : 0;
 
       if (quantityInCart + quantity > product.stock) {
-        let message = `庫存僅剩 ${product.stock} 件！`;
+        let message = `Only ${product.stock} left in stock!`;
         if (quantityInCart > 0) {
-            message += ` (購物車已有 ${quantityInCart} 件)`;
+            message += ` (${quantityInCart} in cart)`;
         }
         setAddCartNotification(message);
         setTimeout(() => setAddCartNotification(''), 3000);
@@ -124,23 +124,23 @@ const ProductDetailPage = () => {
       }
 
       addToCart(product, quantity);
-      setAddCartNotification('成功加入購物車！');
+      setAddCartNotification('Successfully added to cart!');
       setTimeout(() => {
         setAddCartNotification('');
-      }, 2000);
+      }, 3000);
     }
   };
 
   if (loading) {
-    return <p className="text-center text-gray-500">載入中...</p>;
+    return <p className="text-center text-gray-500">Loading...</p>;
   }
 
   if (error) {
-    return <p className="text-center text-red-500">錯誤: {error}</p>;
+    return <p className="text-center text-red-500">Error: {error}</p>;
   }
 
   if (!product) {
-    return <p className="text-center text-gray-500">找不到商品</p>;
+    return <p className="text-center text-gray-500">Product not found</p>;
   }
 
   const discountedPrice = product.price * (1 - product.discountPercentage / 100);
@@ -166,26 +166,12 @@ const ProductDetailPage = () => {
   const backgroundPositionY = -(cy * zoomFactor - imgHeight / 2);
 
   return (
-    <div className="w-full px-8 py-4">
-      <div className="mb-4">
-        <Link to="/" className="text-blue-500 hover:underline">&larr; 返回商品列表</Link>
-        <nav className="mt-2 text-sm text-gray-500" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1">
-            <li>
-              <Link to="/" className="hover:underline">首頁</Link>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-1">/</span>
-                <span className="font-medium text-gray-700">{product?.category}</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <Link to="/" className="text-blue-500 hover:underline">&larr; Back to Product List</Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Left Part: Image and Details */}
-        <div className="md:col-span-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="flex flex-col items-center">
           <div className="bg-white border rounded-lg shadow-md md:flex relative h-full">
             {/* Image Container */}
             <div className="md:w-1/2 relative p-4 flex flex-col">
@@ -313,14 +299,14 @@ const ProductDetailPage = () => {
                   </div>
                   <button
                     onClick={handleAddToCart}
-                    className="flex-grow text-white h-10 px-6 rounded transition-colors bg-black hover:bg-gray-800"
+                    className="w-full bg-black text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors"
                   >
-                    加入購物車
+                    Add to Cart
                   </button>
                 </div>
-                <div className="mt-2 text-xs h-4">
+                <div className="h-6 mt-2 text-center">
                     {addCartNotification && (
-                      <p className={addCartNotification.includes('成功') ? 'text-black' : 'text-red-500'}>
+                      <p className={addCartNotification.includes('Successfully') ? 'text-black' : 'text-red-500'}>
                         {addCartNotification}
                       </p>
                     )}

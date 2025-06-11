@@ -29,8 +29,8 @@ const Cart = () => {
   if (cartItems.length === 0) {
     return (
       <div className="p-4 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">購物車</h2>
-        <p className="text-gray-500">您的購物車是空的。</p>
+        <h2 className="text-xl font-bold mb-4">Shopping Cart</h2>
+        <p className="text-gray-500">Your cart is empty.</p>
       </div>
     );
   }
@@ -38,7 +38,7 @@ const Cart = () => {
   return (
     <div className="p-4 bg-white rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">購物車</h2>
+        <h2 className="text-xl font-bold">Shopping Cart</h2>
         <button 
           onClick={handleClearCart}
           className={`text-sm font-semibold transition-all duration-200 ${
@@ -47,7 +47,7 @@ const Cart = () => {
               : 'text-red-500 hover:text-red-700'
           }`}
         >
-          {isConfirmingClear ? '確認清空？' : '清空'}
+          {isConfirmingClear ? 'Confirm Clear?' : 'Clear'}
         </button>
       </div>
       <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
@@ -81,7 +81,7 @@ const Cart = () => {
                   <button
                       onClick={() => removeFromCart(item.id)}
                       className="text-red-500 hover:text-red-700 font-bold"
-                      title="移除商品"
+                      title="Remove item"
                   >
                       X
                   </button>
@@ -92,7 +92,7 @@ const Cart = () => {
       </div>
       <hr className="my-4" />
       <div className="flex justify-between items-center font-bold text-lg">
-        <span>總計</span>
+        <span>Total</span>
         <span>${getCartTotal().toFixed(2)}</span>
       </div>
     </div>
