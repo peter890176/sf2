@@ -4,6 +4,7 @@ import { CartProvider } from './context/CartContext';
 import NavBar from './components/NavBar';
 import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import RegisterForm from './components/RegisterForm';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Routes>
               <Route path="/" element={<ShopPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="/register" element={<RegisterForm />} />
             </Routes>
           </main>
         </div>
