@@ -12,15 +12,13 @@ const ProductCard = memo(({
   const [quantity, setQuantity] = useState(1);
 
   const handleQuantityChange = (newQuantity) => {
-    // 數量不能小於 1
+
     if (newQuantity < 1) return;
     
-    // 這裡我們只更新UI，不直接彈出庫存警告。真正的庫存檢查在加入購物車時進行。
-    // 這可以避免在用戶只是想增加數量時過早地顯示警告。
-    // 但我們仍然可以限制數量不能超過庫存。
+
     if (newQuantity > product.stock) {
-      // 可以在此處設置一個輕微的視覺提示，但主要警告邏輯在 onAddToCart 中
-      setQuantity(product.stock); // 或者可以選擇不做任何事
+
+      setQuantity(product.stock); 
       return;
     }
     setQuantity(newQuantity);

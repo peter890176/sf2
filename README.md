@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# SF Shop - A Modern E-commerce Platform Front-End
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to SF Shop, a feature-rich e-commerce front-end application built with React. This project serves as a practical demonstration of modern web development techniques, with a strong emphasis on performance optimization and clean code architecture.
 
-## Available Scripts
+**[➡️ Live Demo](https://sfshop.netlify.app/)**
 
-In the project directory, you can run:
+## Key Features
 
-### `npm start`
+- **Product Catalog**: Browse a wide range of products fetched from a live API.
+- **Category Filtering**: Easily filter products by category.
+- **Product Details Page**: View detailed information and image galleries for each product.
+- **Shopping Cart**: Fully functional cart to add, review, and manage items.
+- **Quantity Management**: Update item quantities directly in the product list and the cart.
+- **User Registration**: A dedicated page for user registration.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Performance Optimization Highlights
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This project goes beyond basic functionality and implements several key performance optimizations that are crucial for a modern, fast, and responsive user experience.
 
-### `npm test`
+### 1. State Management Optimization
+- **Optimized Context**: The global `CartContext` has been fine-tuned using `useMemo` and `useCallback` hooks. This prevents unnecessary re-renders of consumer components when the state hasn't changed, significantly improving UI stability.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 2. Component Rendering Optimization
+- **Memoized Components**: High-frequency components, such as `ProductCard` in the product list, are wrapped in `React.memo`. This, combined with stable props, ensures that only the components that need to be updated are re-rendered, drastically reducing the rendering workload.
 
-### `npm run build`
+### 3. Asset Loading Optimization
+- **Image Lazy Loading**: Off-screen images (e.g., product thumbnails further down the list) use the native `loading="lazy"` attribute. This prioritizes the loading of critical, above-the-fold content, improving the Largest Contentful Paint (LCP) metric and perceived performance.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Tech Stack
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Framework**: [React](https://reactjs.org/)
+- **Routing**: [React Router](https://reactrouter.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **State Management**: React Context API
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Getting Started
 
-### `npm run eject`
+To get a local copy up and running, follow these simple steps.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Prerequisites
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- [Node.js](https://nodejs.org/) (version 14 or later recommended)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Installation
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. Clone the repo
+   ```sh
+   git clone <YOUR_REPOSITORY_URL>
+   ```
+2. Navigate to the project directory
+   ```sh
+   cd sf2
+   ```
+3. Install dependencies
+   ```sh
+   npm install
+   ```
+   or
+   ```sh
+   yarn install
+   ```
 
-## Learn More
+### Running the Application
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Development Mode**:
+  ```sh
+  npm start
+  ```
+  Runs the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page will auto-reload when you make changes.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **Production Build**:
+  ```sh
+  npm run build
+  ```
+  Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### Code Splitting
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+sf2/
+└── src/
+    ├── components/      # Reusable UI components (NavBar, ProductCard, etc.)
+    ├── context/         # Global state management (CartContext)
+    ├── pages/           # Page components for routing (ShopPage, ProductDetailPage, etc.)
+    ├── App.js           # Main application component with routing setup
+    ├── index.css        # Global styles and Tailwind CSS imports
+    └── index.js         # Application entry point
+```
 
-### Analyzing the Bundle Size
+## Acknowledgments
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Parts of the code in this project, especially concerning performance optimizations and refactoring, were developed with the assistance of the Gemini 2.5 Pro AI model. All AI-generated code has been reviewed and verified by the project developer.
