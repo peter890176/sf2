@@ -7,20 +7,22 @@ const ProductCard = memo(({
   product, 
   index, 
   addCartNotification,
-  onAddToCart
+  onAddToCart,
+  onStockLimit,
+  clearNotification,
 }) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleQuantityChange = (newQuantity) => {
-
     if (newQuantity < 1) return;
     
-
     if (newQuantity > product.stock) {
-
-      setQuantity(product.stock); 
+      onStockLimit(product);
       return;
     }
+
+    // 當使用者調整為有效數量時，清除可能存在的舊通知
+    clearNotification(product.id);
     setQuantity(newQuantity);
   };
 
@@ -132,19 +134,34 @@ const ProductList = () => {
   const [addCartNotifications, setAddCartNotifications] = useState({});
   const [selectedCategory, setSelectedCategory] = useState('All');
 
+  const showStockNotification = useCallback((product) => {
+    const itemInCart = cartItems.find(item => item.id === product.id);
+    const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+    let message = `Only ${product.stock} left in stock!`;
+    if (quantityInCart > 0) {
+      message += ` (${quantityInCart} in cart)`;
+    }
+    setAddCartNotifications(prev => ({ ...prev, [product.id]: message }));
+    setTimeout(() => {
+      setAddCartNotifications(prev => ({ ...prev, [product.id]: undefined }));
+    }, 3000);
+  }, [cartItems]);
+
+  const clearNotification = useCallback((productId) => {
+    setAddCartNotifications(prev => {
+      if (!prev[productId] || prev[productId].includes('Added to cart!')) return prev;
+      const newNotifs = {...prev};
+      delete newNotifs[productId];
+      return newNotifs;
+    });
+  }, []);
+
   const handleAddToCart = useCallback((product, quantityToAdd) => {
     const itemInCart = cartItems.find(item => item.id === product.id);
     const quantityInCart = itemInCart ? itemInCart.quantity : 0;
 
     if (quantityInCart + quantityToAdd > product.stock) {
-      let message = `Only ${product.stock} left in stock!`;
-      if (quantityInCart > 0) {
-        message += ` (${quantityInCart} in cart)`;
-      }
-      setAddCartNotifications(prev => ({ ...prev, [product.id]: message }));
-      setTimeout(() => {
-        setAddCartNotifications(prev => ({ ...prev, [product.id]: undefined }));
-      }, 3000);
+      showStockNotification(product);
       return;
     }
 
@@ -153,7 +170,7 @@ const ProductList = () => {
     setTimeout(() => {
       setAddCartNotifications(prev => ({ ...prev, [product.id]: undefined }));
     }, 2000);
-  }, [cartItems, addToCart]);
+  }, [cartItems, addToCart, showStockNotification]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -219,6 +236,8 @@ const ProductList = () => {
               index={index}
               addCartNotification={addCartNotification}
               onAddToCart={handleAddToCart}
+              onStockLimit={showStockNotification}
+              clearNotification={clearNotification}
             />
           );
         })}
