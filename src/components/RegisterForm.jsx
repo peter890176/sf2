@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const PasswordCriteria = ({ password }) => {
   const hasLength = password.length >= 8;
@@ -35,12 +35,7 @@ const RegisterForm = () => {
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-
-    validate();
-  }, [formData]);
-
-  const validate = () => {
+  const validate = useCallback(() => {
     const newErrors = {};
     // Username
     if (touched.username && formData.username.length < 3) {
@@ -50,7 +45,7 @@ const RegisterForm = () => {
     if (touched.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    // Password - 
+    // Password -
     if (touched.password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(formData.password)) {
       newErrors.password = 'Password does not meet all criteria';
     }
@@ -61,7 +56,11 @@ const RegisterForm = () => {
     
     setErrors(newErrors);
     return newErrors;
-  };
+  }, [formData, touched]);
+
+  useEffect(() => {
+    validate();
+  }, [validate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
