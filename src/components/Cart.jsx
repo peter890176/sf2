@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, getCartTotal, clearCart } = useCart();
+  const { cartItems, removeFromCart, cartTotal, clearCart } = useCart();
   const [isConfirmingClear, setIsConfirmingClear] = useState(false);
   const confirmTimeoutRef = useRef(null);
 
@@ -93,7 +93,7 @@ const Cart = () => {
       <hr className="my-4" />
       <div className="flex justify-between items-center font-bold text-lg">
         <span>Total</span>
-        <span>${getCartTotal().toFixed(2)}</span>
+        <span>${cartTotal.toFixed(2)}</span>
       </div>
     </div>
   );
