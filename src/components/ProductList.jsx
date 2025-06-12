@@ -116,7 +116,7 @@ const ProductList = () => {
         ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => {
+        {filteredProducts.map((product, index) => {
           const quantity = quantities[product.id] || 1;
           const discountedPrice = product.price * (1 - product.discountPercentage / 100);
           const totalPrice = discountedPrice * quantity;
@@ -126,7 +126,12 @@ const ProductList = () => {
             <div key={product.id} className="@container bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
               <div className="relative">
                 <Link to={`/product/${product.id}`}>
-                  <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" loading="lazy" />
+                  <img 
+                    src={product.thumbnail} 
+                    alt={product.title} 
+                    className="w-full h-48 object-contain" 
+                    loading={index < 12 ? 'eager' : 'lazy'} 
+                  />
                 </Link>
               </div>
               <div className="px-4 pt-4 pb-3 flex flex-col flex-grow">
