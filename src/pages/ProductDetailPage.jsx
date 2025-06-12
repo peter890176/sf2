@@ -225,6 +225,7 @@ const ProductDetailPage = () => {
                       currentImageIndex === index ? 'border-blue-500' : 'border-transparent'
                     }`}
                     onClick={() => setCurrentImageIndex(index)}
+                    loading="lazy"
                   />
                 ))}
               </div>

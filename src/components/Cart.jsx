@@ -58,7 +58,12 @@ const Cart = () => {
           return (
             <div key={item.id} className="flex justify-between items-center gap-4">
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <img src={item.thumbnail} alt={item.title} className="w-16 h-16 object-cover rounded flex-shrink-0" />
+                <img 
+                  src={item.thumbnail} 
+                  alt={item.title} 
+                  className="w-16 h-16 object-cover rounded flex-shrink-0" 
+                  loading="lazy"
+                />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold truncate">{item.title}</h3>
                   <div className="flex items-center text-sm text-gray-500">

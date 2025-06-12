@@ -126,7 +126,7 @@ const ProductList = () => {
             <div key={product.id} className="@container bg-white border rounded-lg shadow-md overflow-hidden flex flex-col">
               <div className="relative">
                 <Link to={`/product/${product.id}`}>
-                  <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" />
+                  <img src={product.thumbnail} alt={product.title} className="w-full h-48 object-contain" loading="lazy" />
                 </Link>
               </div>
               <div className="px-4 pt-4 pb-3 flex flex-col flex-grow">
