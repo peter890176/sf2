@@ -1,4 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+const PasswordCriteria = ({ password }) => {
+  const hasLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
+
+  const Criterion = ({ met, text }) => (
+    <li className={`flex items-center text-sm ${met ? 'text-green-600' : 'text-gray-500'}`}>
+      <span className="w-4 h-4 mr-2">{met ? '✓' : '◦'}</span>
+      {text}
+    </li>
+  );
+
+  return (
+    <ul className="mt-2 space-y-1">
+      <Criterion met={hasLength} text="At least 8 characters long" />
+      <Criterion met={hasUpper} text="Contains an uppercase letter" />
+      <Criterion met={hasLower} text="Contains a lowercase letter" />
+      <Criterion met={hasNumber} text="Contains a number" />
+    </ul>
+  );
+};
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -9,26 +32,34 @@ const RegisterForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+
+    validate();
+  }, [formData]);
 
   const validate = () => {
     const newErrors = {};
-    // Username: at least 3 characters
-    if (formData.username.length < 3) {
+    // Username
+    if (touched.username && formData.username.length < 3) {
       newErrors.username = 'Username must be at least 3 characters long';
     }
-    // Email: valid format
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    // Email
+    if (touched.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    // Password: at least 8 chars, one uppercase, one lowercase, one number
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters long and include uppercase, lowercase, and a number';
+    // Password - 
+    if (touched.password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(formData.password)) {
+      newErrors.password = 'Password does not meet all criteria';
     }
-    // Confirm Password: must match password
-    if (formData.password !== formData.confirmPassword) {
+    // Confirm Password
+    if (touched.confirmPassword && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
+    
+    setErrors(newErrors);
     return newErrors;
   };
 
@@ -37,14 +68,24 @@ const RegisterForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched({ ...touched, [name]: true });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setTouched({
+      username: true,
+      email: true,
+      password: true,
+      confirmPassword: true,
+    });
+
     const validationErrors = validate();
-    setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
       setSubmitted(true);
       console.log('Form submitted successfully:', formData);
-      // Here you would typically send the data to a server
     } else {
       setSubmitted(false);
     }
@@ -71,6 +112,7 @@ const RegisterForm = () => {
                 id="username"
                 value={formData.username}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 className={`w-full px-3 py-2 border rounded-lg ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
@@ -86,6 +128,7 @@ const RegisterForm = () => {
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 className={`w-full px-3 py-2 border rounded-lg ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -101,9 +144,11 @@ const RegisterForm = () => {
                 id="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-lg ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+                onBlur={handleBlur}
+                className={`w-full px-3 py-2 border rounded-lg ${errors.password && touched.password ? 'border-red-500' : 'border-gray-300'}`}
               />
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              <PasswordCriteria password={formData.password} />
+              {errors.password && touched.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
 
             <div className="mb-6">
@@ -116,6 +161,7 @@ const RegisterForm = () => {
                 id="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 className={`w-full px-3 py-2 border rounded-lg ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
