@@ -38,8 +38,8 @@ export const CartProvider = ({ children }) => {
 
   const cartTotal = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const price = item.price * (1 - item.discountPercentage / 100);
-      return total + price * item.quantity;
+      const price = Number((item.price * (1 - item.discountPercentage / 100)).toFixed(2));
+      return Number((total + price * item.quantity).toFixed(2));
     }, 0);
   }, [cartItems]);
 

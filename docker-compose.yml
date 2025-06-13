@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .                    # Build from current directory
+    ports:
+      - "3000:3000"            # Map container port to host port
+    volumes:
+      - .:/app                 # Mount current directory to /app
+      - /app/node_modules      # Preserve node_modules in container
+    environment:
+      - NODE_ENV=development   # Set development environment
+    command: npm start         # Start development server 
