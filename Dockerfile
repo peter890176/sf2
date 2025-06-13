@@ -13,14 +13,8 @@ RUN npm install
 # Copy all source code
 COPY . .
 
-# Build the application
-RUN npm run build
-
-# Install serve for static file serving
-RUN npm install -g serve
-
 # Expose port
 EXPOSE 3000
 
 # Start the application
-CMD ["serve", "-s", "build", "-l", "3000"] 
+CMD ["npm", "start"] 
