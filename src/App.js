@@ -8,6 +8,8 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import ProfilePage from './pages/ProfilePage';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 
 function App() {
   return (
@@ -21,8 +23,10 @@ function App() {
               <Route path="/" element={<ShopPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/register" element={<RegisterForm />} />
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-success/:id" element={<OrderSuccessPage />} />
             </Routes>
           </main>
         </div>

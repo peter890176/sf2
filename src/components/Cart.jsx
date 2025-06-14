@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const { cartItems, removeFromCart, cartTotal, clearCart } = useCart();
+  const navigate = useNavigate();
   const [isConfirmingClear, setIsConfirmingClear] = useState(false);
   const confirmTimeoutRef = useRef(null);
 
@@ -100,6 +102,12 @@ const Cart = () => {
         <span>Total</span>
         <span>${cartTotal.toFixed(2)}</span>
       </div>
+      <button
+        onClick={() => navigate('/checkout')}
+        className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-colors"
+      >
+        Checkout
+      </button>
     </div>
   );
 };
