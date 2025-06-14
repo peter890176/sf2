@@ -3,12 +3,13 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import CartItemRow from '../components/CartItemRow';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const { cartItems, cartTotal, clearCart } = useCart();
+  const { cartItems, cartTotal, clearCart, removeFromCart } = useCart();
 
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -153,15 +154,13 @@ const CheckoutPage = () => {
           <p>Your cart is empty.</p>
         ) : (
           <div className="space-y-4">
-            {cartItems.map((item) => {
-              const discountedPrice = item.price * (1 - item.discountPercentage / 100);
-              return (
-                <div key={item.id} className="flex justify-between">
-                  <span>{item.title} x {item.quantity}</span>
-                  <span>${(discountedPrice * item.quantity).toFixed(2)}</span>
-                </div>
-              );
-            })}
+            {cartItems.map((item) => (
+              <CartItemRow
+                key={item.id}
+                item={item}
+                onRemove={() => removeFromCart(item.id)}
+              />
+            ))}
             <hr className="my-2" />
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
