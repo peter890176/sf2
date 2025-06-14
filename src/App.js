@@ -10,6 +10,7 @@ import LoginForm from './components/LoginForm';
 import ProfilePage from './pages/ProfilePage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -24,9 +25,21 @@ function App() {
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/login" element={<LoginForm />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/order-success/:id" element={<OrderSuccessPage />} />
+              <Route path="/profile" element={
+                <PrivateRoute>
+                  <ProfilePage />
+                </PrivateRoute>
+              } />
+              <Route path="/checkout" element={
+                <PrivateRoute>
+                  <CheckoutPage />
+                </PrivateRoute>
+              } />
+              <Route path="/order-success/:id" element={
+                <PrivateRoute>
+                  <OrderSuccessPage />
+                </PrivateRoute>
+              } />
             </Routes>
           </main>
         </div>

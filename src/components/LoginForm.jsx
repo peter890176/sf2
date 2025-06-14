@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
@@ -55,7 +56,8 @@ const LoginForm = () => {
       try {
         setIsSubmitting(true);
         await login(formData.username, formData.password);
-        navigate('/');
+        const redirectPath = location.state?.from || '/';
+        navigate(redirectPath, { replace: true });
       } catch (error) {
         console.error('Login error details:', error);
         setSubmitError(
