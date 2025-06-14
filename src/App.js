@@ -7,6 +7,7 @@ import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/register" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/profile" element={<ProfilePage />} />
               </Routes>
             </main>
           </div>
