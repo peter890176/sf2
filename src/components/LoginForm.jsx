@@ -57,7 +57,12 @@ const LoginForm = () => {
         await login(formData.username, formData.password);
         navigate('/');
       } catch (error) {
-        setSubmitError(error.response?.data?.error || 'Login failed. Please check your credentials.');
+        console.error('Login error details:', error);
+        setSubmitError(
+          error.response?.data?.error || 
+          error.message || 
+          'Login failed. Please check your credentials.'
+        );
       } finally {
         setIsSubmitting(false);
       }
