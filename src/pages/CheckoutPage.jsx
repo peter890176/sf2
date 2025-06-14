@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const { cartItems, cartTotal, clearCart } = useCart();
 
   const [addresses, setAddresses] = useState([]);
@@ -14,6 +17,8 @@ const CheckoutPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const fetchAddresses = async () => {
       try {
         setLoadingAddresses(true);
@@ -36,7 +41,23 @@ const CheckoutPage = () => {
     };
 
     fetchAddresses();
-  }, []);
+  }, [isAuthenticated]);
+
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md text-center">
+        <h1 className="text-2xl font-bold mb-4">Checkout</h1>
+        <p className="mb-4">You need to log in before placing an order.</p>
+        <Link
+          to="/login"
+          state={{ from: location.pathname }}
+          className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg"
+        >
+          Go to Login
+        </Link>
+      </div>
+    );
+  }
 
   const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
 

@@ -30,11 +30,7 @@ function App() {
                   <ProfilePage />
                 </PrivateRoute>
               } />
-              <Route path="/checkout" element={
-                <PrivateRoute>
-                  <CheckoutPage />
-                </PrivateRoute>
-              } />
+              <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-success/:id" element={
                 <PrivateRoute>
                   <OrderSuccessPage />
