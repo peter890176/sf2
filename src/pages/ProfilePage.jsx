@@ -34,6 +34,7 @@ const ProfilePage = () => {
 
       // Fetch user addresses
       const addressesResponse = await axios.get('/api/users/addresses', { headers });
+      console.log('API Response for Addresses:', addressesResponse.data);
       setAddresses(addressesResponse.data.data.addresses);
       setAddressesLoading(false);
 
