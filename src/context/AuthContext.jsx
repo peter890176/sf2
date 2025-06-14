@@ -1,8 +1,33 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-// 設定 axios 的基礎 URL
-axios.defaults.baseURL = 'https://eb-production-0a4e.up.railway.app';
+// Set axios base URL
+axios.defaults.baseURL = 'https://web-production-0a4e.up.railway.app';
+
+// Add request interceptor to log requests
+axios.interceptors.request.use(request => {
+  console.log('Starting Request:', request);
+  return request;
+});
+
+// Add response interceptor to log responses
+axios.interceptors.response.use(
+  response => {
+    console.log('Response:', response);
+    return response;
+  },
+  error => {
+    console.error('Response Error:', error);
+    if (error.code === 'ERR_NETWORK') {
+      console.error('Network Error Details:', {
+        message: error.message,
+        code: error.code,
+        config: error.config
+      });
+    }
+    return Promise.reject(error);
+  }
+);
 
 const AuthContext = createContext(null);
 

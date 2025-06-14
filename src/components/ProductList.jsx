@@ -21,7 +21,7 @@ const ProductCard = memo(({
       return;
     }
 
-    // 當使用者調整為有效數量時，清除可能存在的舊通知
+    // Clear any existing notifications when user adjusts to a valid quantity
     clearNotification(product.id);
     setQuantity(newQuantity);
   };
