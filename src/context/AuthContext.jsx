@@ -50,9 +50,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const fetchUserProfile = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     try {
       const response = await axios.get('/api/users/profile');
-      setUser(response.data);
+      setUser(response.data.data.user);
     } catch (error) {
       console.error('Error fetching user profile:', error);
       if (error.response?.status === 401) {
