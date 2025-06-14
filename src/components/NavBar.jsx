@@ -29,7 +29,7 @@ const Navbar = () => {
               </Link>
             ) : (
               <Link to="/login" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50">
-                Login
+                Log In
               </Link>
             )}
             <Link to="/cart" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-600 bg-white hover:bg-gray-50">
