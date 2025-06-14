@@ -140,7 +140,6 @@ const ProfilePage = () => {
       setIsModalOpen(false); // Close modal on success
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save address.');
-      alert(err.response?.data?.message || 'Failed to save address.');
       setIsModalOpen(false);
     } finally {
       setIsAddressSaving(false);
@@ -162,7 +161,6 @@ const ProfilePage = () => {
       setIsModalOpen(false); // Close modal on success
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update address.');
-      alert(err.response?.data?.message || 'Failed to update address.');
       setIsModalOpen(false);
     } finally {
       setIsAddressSaving(false);
@@ -182,7 +180,7 @@ const ProfilePage = () => {
         setAddresses(prev => prev.filter(addr => addr._id !== addressId));
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to delete address.');
-        alert(err.response?.data?.message || 'Failed to delete address.');
+        setIsModalOpen(false);
       }
     }
   };
