@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import AddressModal from '../components/AddressModal';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -13,6 +14,11 @@ const ProfilePage = () => {
   // New states for addresses
   const [addresses, setAddresses] = useState([]);
   const [addressesLoading, setAddressesLoading] = useState(true);
+
+  // New states for address modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddressSaving, setIsAddressSaving] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null); // Track the address being edited
 
   const fetchProfileAndAddresses = useCallback(async () => {
     setLoading(true);
@@ -34,7 +40,6 @@ const ProfilePage = () => {
 
       // Fetch user addresses
       const addressesResponse = await axios.get('/api/users/addresses', { headers });
-      console.log('API Response for Addresses:', addressesResponse.data);
       setAddresses(addressesResponse.data.data.addresses);
       setAddressesLoading(false);
 
@@ -99,6 +104,86 @@ const ProfilePage = () => {
       );
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleOpenEditModal = (address) => {
+    setEditingAddress(address);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenAddModal = () => {
+    setEditingAddress(null);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveAddress = (addressData) => {
+    if (editingAddress) {
+      // Update existing address
+      handleUpdateAddress(addressData);
+    } else {
+      // Add new address
+      handleAddNewAddress(addressData);
+    }
+  };
+
+  const handleAddNewAddress = async (addressData) => {
+    setIsAddressSaving(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('/api/users/addresses', addressData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Add new address to the start of the list
+      setAddresses(prev => [response.data.data.address, ...prev]);
+      setIsModalOpen(false); // Close modal on success
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to save address.');
+      alert(err.response?.data?.message || 'Failed to save address.');
+      setIsModalOpen(false);
+    } finally {
+      setIsAddressSaving(false);
+    }
+  };
+
+  const handleUpdateAddress = async (addressData) => {
+    setIsAddressSaving(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`/api/users/addresses/${editingAddress._id}`, addressData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Update the address in the list
+      setAddresses(prev => prev.map(addr => 
+        addr._id === editingAddress._id ? response.data.data.address : addr
+      ));
+      setIsModalOpen(false); // Close modal on success
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update address.');
+      alert(err.response?.data?.message || 'Failed to update address.');
+      setIsModalOpen(false);
+    } finally {
+      setIsAddressSaving(false);
+    }
+  };
+
+  const handleDeleteAddress = async (addressId) => {
+    // Show a confirmation dialog before deleting
+    if (window.confirm('Are you sure you want to delete this address?')) {
+      setError(null);
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`/api/users/addresses/${addressId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        // Remove the address from the list
+        setAddresses(prev => prev.filter(addr => addr._id !== addressId));
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to delete address.');
+        alert(err.response?.data?.message || 'Failed to delete address.');
+      }
     }
   };
 
@@ -197,7 +282,10 @@ const ProfilePage = () => {
       <div className="p-6 bg-white rounded-lg shadow-md">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">My Addresses</h2>
-          <button className="bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors hover:bg-black text-sm">
+          <button 
+            onClick={handleOpenAddModal}
+            className="bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors hover:bg-black text-sm"
+          >
             Add New Address
           </button>
         </div>
@@ -213,8 +301,8 @@ const ProfilePage = () => {
                   <span className="text-xs font-bold bg-gray-200 text-gray-800 rounded-full px-2 py-1 mt-2 inline-block">Default</span>
                 )}
                 <div className="mt-3 flex gap-2">
-                  <button className="text-sm text-blue-600 hover:underline">Edit</button>
-                  <button className="text-sm text-red-600 hover:underline">Delete</button>
+                  <button onClick={() => handleOpenEditModal(address)} className="text-sm text-blue-600 hover:underline">Edit</button>
+                  <button onClick={() => handleDeleteAddress(address._id)} className="text-sm text-red-600 hover:underline">Delete</button>
                 </div>
               </div>
             ))}
@@ -223,6 +311,15 @@ const ProfilePage = () => {
           <p>You have no saved addresses.</p>
         )}
       </div>
+      
+      {/* Address Modal */}
+      <AddressModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveAddress}
+        isSaving={isAddressSaving}
+        address={editingAddress}
+      />
     </div>
   );
 };
