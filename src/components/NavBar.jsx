@@ -19,6 +19,9 @@ const Navbar = () => {
           SF Shop
         </Link>
         <div className="flex gap-4">
+          <Link to="/" className="text-lg text-gray-600 hover:text-black">
+            Shop
+          </Link>
           {isAuthenticated ? (
             <>
               <Link to="/profile" className="text-lg text-gray-600 hover:text-black">
