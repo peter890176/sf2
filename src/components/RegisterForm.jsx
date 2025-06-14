@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const PasswordCriteria = ({ password }) => {
   const hasLength = password.length >= 8;
@@ -24,6 +26,7 @@ const PasswordCriteria = ({ password }) => {
 };
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -33,7 +36,8 @@ const RegisterForm = () => {
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const validate = useCallback(() => {
     const newErrors = {};
@@ -45,7 +49,7 @@ const RegisterForm = () => {
     if (touched.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    // Password -
+    // Password
     if (touched.password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(formData.password)) {
       newErrors.password = 'Password does not meet all criteria';
     }
@@ -65,6 +69,7 @@ const RegisterForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setSubmitError('');
   };
 
   const handleBlur = (e) => {
@@ -72,7 +77,7 @@ const RegisterForm = () => {
     setTouched({ ...touched, [name]: true });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setTouched({
       username: true,
@@ -83,98 +88,103 @@ const RegisterForm = () => {
 
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
-      setSubmitted(true);
-      console.log('Form submitted successfully:', formData);
-    } else {
-      setSubmitted(false);
+      try {
+        setIsSubmitting(true);
+        const { confirmPassword, ...registerData } = formData;
+        await axios.post('/api/auth/register', registerData);
+        navigate('/login');
+      } catch (error) {
+        setSubmitError(error.response?.data?.error || 'Registration failed. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      {submitted ? (
-        <div className="text-center text-green-600">
-          <h2 className="text-2xl font-bold">Registration Successful!</h2>
-          <p>Thank you for registering.</p>
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Account</h1>
+      {submitError && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+          {submitError}
         </div>
-      ) : (
-        <>
-          <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Account</h1>
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="username">
-                Username
-              </label>
-              <input
-                type="text"
-                name="username"
-                id="username"
-                value={formData.username}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-3 py-2 border rounded-lg ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
-              />
-              {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="email">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                value={formData.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-3 py-2 border rounded-lg ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-              />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="password">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-3 py-2 border rounded-lg ${errors.password && touched.password ? 'border-red-500' : 'border-gray-300'}`}
-              />
-              <PasswordCriteria password={formData.password} />
-              {errors.password && touched.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="confirmPassword">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                id="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-3 py-2 border rounded-lg ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
-              />
-              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-black transition-colors"
-            >
-              Create Account
-            </button>
-          </form>
-        </>
       )}
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="username">
+            Username
+          </label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            value={formData.username}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className={`w-full px-3 py-2 border rounded-lg ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="email">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className={`w-full px-3 py-2 border rounded-lg ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="password">
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            value={formData.password}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className={`w-full px-3 py-2 border rounded-lg ${errors.password && touched.password ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          <PasswordCriteria password={formData.password} />
+          {errors.password && touched.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="confirmPassword">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className={`w-full px-3 py-2 border rounded-lg ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={`w-full bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors ${
+            isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black'
+          }`}
+        >
+          {isSubmitting ? 'Creating Account...' : 'Create Account'}
+        </button>
+      </form>
     </div>
   );
 };
