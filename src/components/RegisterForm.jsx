@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axios';
 
 const PasswordCriteria = ({ password }) => {
   const hasLength = password.length >= 8;
@@ -91,7 +91,7 @@ const RegisterForm = () => {
       try {
         setIsSubmitting(true);
         const { confirmPassword, ...registerData } = formData;
-        await axios.post('/api/auth/register', registerData);
+        await api.post('/auth/register', registerData);
         navigate('/login');
       } catch (error) {
         setSubmitError(error.response?.data?.error || 'Registration failed. Please try again.');
