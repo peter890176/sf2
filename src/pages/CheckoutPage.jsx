@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axios';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import CartItemRow from '../components/CartItemRow';
@@ -23,10 +23,7 @@ const CheckoutPage = () => {
     const fetchAddresses = async () => {
       try {
         setLoadingAddresses(true);
-        const token = localStorage.getItem('token');
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/addresses`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get('/api/users/addresses');
         const list = res.data.data.addresses;
         setAddresses(list);
         // Set default address selection
@@ -86,10 +83,7 @@ const CheckoutPage = () => {
     }
     try {
       setPlacingOrder(true);
-      const token = localStorage.getItem('token');
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/orders`, buildPayload(), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.post('/api/orders', buildPayload());
       const orderId = res.data.data.order._id;
       clearCart();
       navigate(`/order-success/${orderId}`);

@@ -21,7 +21,12 @@ export const CartProvider = ({ children }) => {
         );
       } else {
         // Add new item with the given quantity
-        return [...prevItems, { ...product, quantity: quantity }];
+        const newItem = { 
+          ...product, 
+          thumbnail: product.imageUrl, // Ensure thumbnail exists for the cart
+          quantity: quantity 
+        };
+        return [...prevItems, newItem];
       }
     });
   }, []);

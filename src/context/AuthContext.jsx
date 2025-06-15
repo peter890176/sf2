@@ -1,33 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-
-// Set axios base URL
-axios.defaults.baseURL = 'https://web-production-0a4e.up.railway.app';
-
-// Add request interceptor to log requests
-axios.interceptors.request.use(request => {
-  console.log('Starting Request:', request);
-  return request;
-});
-
-// Add response interceptor to log responses
-axios.interceptors.response.use(
-  response => {
-    console.log('Response:', response);
-    return response;
-  },
-  error => {
-    console.error('Response Error:', error);
-    if (error.code === 'ERR_NETWORK') {
-      console.error('Network Error Details:', {
-        message: error.message,
-        code: error.code,
-        config: error.config
-      });
-    }
-    return Promise.reject(error);
-  }
-);
+import api from '../api/axios';
 
 const AuthContext = createContext(null);
 
@@ -46,18 +18,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
   }, []);
 
   const fetchUserProfile = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setLoading(false);
-      return;
-    }
     try {
-      const response = await axios.get('/api/users/profile');
+      const response = await api.get('/api/users/profile');
       setUser(response.data.data.user);
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -72,7 +38,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       fetchUserProfile();
     } else {
       setLoading(false);
@@ -82,12 +47,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setLoading(true);
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, credentials);
-      const { token, user } = res.data.data;
+      const res = await api.post('/api/auth/login', credentials);
+      const { token } = res.data;
+      const { user } = res.data.data;
+
       localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
-      await fetchUserProfile();
+      
       return true;
     } catch (err) {
       console.error('Response Error:', err);
@@ -102,12 +68,13 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, userData);
-      const { token, user } = res.data.data;
+      const res = await api.post('/api/auth/register', userData);
+      const { token } = res.data;
+      const { user } = res.data.data;
+
       localStorage.setItem('token', token);
       setUser(user);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      await fetchUserProfile();
+      
       return true;
     } catch (err) {
       console.error('Response Error:', err);

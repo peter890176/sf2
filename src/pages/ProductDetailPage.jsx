@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import Cart from '../components/Cart';
 import StarRating from '../components/StarRating';
+import api from '../api/axios';
 import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
@@ -30,14 +31,9 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const apiUrl = `${process.env.REACT_APP_API_URL}/api/products/${id}`;
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        const prod = data.data?.product || data.product || data;
-        const normalized = prod._id ? { ...prod, id: prod._id } : prod;
+        const response = await api.get(`/api/products/${id}`);
+        const prod = response.data.data?.product || response.data.product || response.data;
+        const normalized = { ...prod, id: prod._id };
         setProduct(normalized);
         setCurrentImageIndex(0);
         setError(null);

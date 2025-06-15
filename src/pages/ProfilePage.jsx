@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import AddressModal from '../components/AddressModal';
 
 const ProfilePage = () => {
@@ -25,11 +25,8 @@ const ProfilePage = () => {
     setAddressesLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
-
       // Fetch user profile
-      const profileResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/profile`, { headers });
+      const profileResponse = await api.get('/api/users/profile');
       const { addresses, ...profileData } = profileResponse.data.data.user;
       setUser(profileData);
       setForm({
@@ -40,7 +37,7 @@ const ProfilePage = () => {
       setLoading(false);
 
       // Fetch user addresses
-      const addressesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/addresses`, { headers });
+      const addressesResponse = await api.get('/api/users/addresses');
       setAddresses(addressesResponse.data.data.addresses);
       setAddressesLoading(false);
 
@@ -82,18 +79,12 @@ const ProfilePage = () => {
     setError(null);
     setSuccess('');
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/users/profile`,
+      const response = await api.put(
+        '/api/users/profile',
         {
           firstName: form.firstName,
           lastName: form.lastName,
           phone: form.phone
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
         }
       );
       setUser({ ...user, ...response.data.data.user });
@@ -132,10 +123,7 @@ const ProfilePage = () => {
     setIsAddressSaving(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/addresses`, addressData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.post('/api/users/addresses', addressData);
       // Add new address to the start of the list
       setAddresses(prev => [response.data.data.address, ...prev]);
       setIsModalOpen(false); // Close modal on success
@@ -151,10 +139,7 @@ const ProfilePage = () => {
     setIsAddressSaving(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/users/addresses/${editingAddress._id}`, addressData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.put(`/api/users/addresses/${editingAddress._id}`, addressData);
       // Update the address in the list
       setAddresses(prev => prev.map(addr => 
         addr._id === editingAddress._id ? response.data.data.address : addr
@@ -171,10 +156,8 @@ const ProfilePage = () => {
   const handleDeleteAddress = async (addressId) => {
     if (!window.confirm('Are you sure you want to delete this address?')) return;
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/users/addresses/${addressId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      await api.delete(
+        `/api/users/addresses/${addressId}`
       );
       setAddresses((prev) => prev.filter((addr) => addr._id !== addressId));
       setSuccess('Address deleted successfully!');
@@ -185,11 +168,9 @@ const ProfilePage = () => {
 
   const handleSetDefaultAddress = async (addressId) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/users/addresses/${addressId}/default`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+      const response = await api.patch(
+        `/api/users/addresses/${addressId}/default`,
+        {}
       );
       setAddresses(response.data.data.addresses);
       setSuccess('Default address updated!');

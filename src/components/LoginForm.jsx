@@ -55,7 +55,7 @@ const LoginForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       try {
         setIsSubmitting(true);
-        await login(formData.username, formData.password);
+        await login({ username: formData.username, password: formData.password });
         const redirectPath = location.state?.from || '/';
         navigate(redirectPath, { replace: true });
       } catch (error) {
