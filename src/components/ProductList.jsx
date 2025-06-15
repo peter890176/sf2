@@ -185,7 +185,6 @@ const ProductList = () => {
         const list = data.data?.products || data.products || data;
         const normalized = list.map((p) => ({ ...p, id: p._id }));
         setProducts(normalized);
-        console.log('--- Fetched Products Data From API ---', normalized);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -206,7 +205,7 @@ const ProductList = () => {
     return <p className="text-center text-red-500">Error: {error}</p>;
   }
 
-  const categories = ['All', ...new Set(products.map(p => p.category))];
+  const categories = ['All', ...new Set(products.map(p => p.category).filter(Boolean))];
 
   const filteredProducts = selectedCategory === 'All'
     ? products
