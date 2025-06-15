@@ -172,15 +172,14 @@ const ProfilePage = () => {
     if (!window.confirm('Are you sure you want to delete this address?')) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/addresses/${addressId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      // Remove the address from the list
-      setAddresses(prev => prev.filter(addr => addr._id !== addressId));
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/api/users/addresses/${addressId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAddresses((prev) => prev.filter((addr) => addr._id !== addressId));
       setSuccess('Address deleted successfully!');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete address.');
-      setIsModalOpen(false);
     }
   };
 
@@ -315,7 +314,20 @@ const ProfilePage = () => {
                 )}
                 <div className="mt-3 flex gap-2">
                   <button onClick={() => handleOpenEditModal(address)} className="text-sm text-blue-600 hover:underline">Edit</button>
-                  <button onClick={() => handleDeleteAddress(address._id)} className="text-sm text-red-600 hover:underline">Delete</button>
+                  <button
+                    onClick={() => handleDeleteAddress(address._id)}
+                    className="text-sm text-red-600 hover:underline"
+                  >
+                    Delete
+                  </button>
+                  {!address.isDefault && (
+                    <button
+                      onClick={() => handleSetDefaultAddress(address._id)}
+                      className="text-sm text-green-600 hover:underline"
+                    >
+                      Set as Default
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
