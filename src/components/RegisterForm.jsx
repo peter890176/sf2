@@ -38,6 +38,7 @@ const RegisterForm = () => {
   const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const validate = useCallback(() => {
     const newErrors = {};
@@ -88,14 +89,28 @@ const RegisterForm = () => {
 
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
+      setIsSubmitting(true);
       try {
-        setIsSubmitting(true);
         const { confirmPassword, ...registerData } = formData;
-        await api.post('/auth/register', registerData);
-        navigate('/login');
+        await api.post('/api/auth/register', registerData);
+        
+        setIsSuccess(true);
+        setSubmitError('');
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
       } catch (error) {
+        console.error('Registration API call failed:', error);
+        if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error response status:', error.response.status);
+            console.error('Error response headers:', error.response.headers);
+        } else if (error.request) {
+            console.error('Error request:', error.request);
+        } else {
+            console.error('Error message:', error.message);
+        }
         setSubmitError(error.response?.data?.error || 'Registration failed. Please try again.');
-      } finally {
         setIsSubmitting(false);
       }
     }
@@ -104,7 +119,12 @@ const RegisterForm = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Account</h1>
-      {submitError && (
+      {isSuccess && (
+        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">
+          Registration successful! Redirecting to login...
+        </div>
+      )}
+      {submitError && !isSuccess && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
           {submitError}
         </div>
@@ -121,6 +141,7 @@ const RegisterForm = () => {
             value={formData.username}
             onChange={handleChange}
             onBlur={handleBlur}
+            disabled={isSubmitting || isSuccess}
             className={`w-full px-3 py-2 border rounded-lg ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
           />
           {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
@@ -137,6 +158,7 @@ const RegisterForm = () => {
             value={formData.email}
             onChange={handleChange}
             onBlur={handleBlur}
+            disabled={isSubmitting || isSuccess}
             className={`w-full px-3 py-2 border rounded-lg ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
           />
           {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -153,6 +175,7 @@ const RegisterForm = () => {
             value={formData.password}
             onChange={handleChange}
             onBlur={handleBlur}
+            disabled={isSubmitting || isSuccess}
             className={`w-full px-3 py-2 border rounded-lg ${errors.password && touched.password ? 'border-red-500' : 'border-gray-300'}`}
           />
           <PasswordCriteria password={formData.password} />
@@ -170,6 +193,7 @@ const RegisterForm = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
             onBlur={handleBlur}
+            disabled={isSubmitting || isSuccess}
             className={`w-full px-3 py-2 border rounded-lg ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
           />
           {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
@@ -177,12 +201,12 @@ const RegisterForm = () => {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isSuccess}
           className={`w-full bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors ${
-            isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black'
+            (isSubmitting || isSuccess) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black'
           }`}
         >
-          {isSubmitting ? 'Creating Account...' : 'Create Account'}
+          {isSuccess ? 'Success!' : isSubmitting ? 'Creating Account...' : 'Create Account'}
         </button>
       </form>
     </div>
