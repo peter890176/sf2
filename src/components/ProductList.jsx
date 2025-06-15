@@ -185,6 +185,7 @@ const ProductList = () => {
         const list = data.data?.products || data.products || data;
         const normalized = list.map((p) => ({ ...p, id: p._id }));
         setProducts(normalized);
+        console.log('--- Fetched Products Data From API ---', normalized);
         setError(null);
       } catch (err) {
         setError(err.message);
