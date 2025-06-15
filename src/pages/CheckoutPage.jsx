@@ -64,7 +64,7 @@ const CheckoutPage = () => {
 
   const buildPayload = () => ({
     orderItems: cartItems.map((item) => ({
-      productId: item.id, // Change to item._id if backend expects MongoDB _id
+      productId: item._id,
       quantity: item.quantity,
     })),
     shippingAddress: {
