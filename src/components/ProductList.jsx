@@ -176,7 +176,8 @@ const ProductList = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/products');
+        const apiUrl = `${process.env.REACT_APP_API_URL}/api/products`;
+        const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

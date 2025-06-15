@@ -17,7 +17,8 @@ const ProductDetailPage = () => {
 
   const [showMagnifier, setShowMagnifier] = useState(false);
   const [[x, y], setXY] = useState([0, 0]);
-  const [[imgWidth, imgHeight], setImgSize] = useState([0, 0]);
+  const [imgWidth, setImgWidth] = useState(0);
+  const [imgHeight, setImgHeight] = useState(0);
   const [magnifiedWidth, setMagnifiedWidth] = useState(0);
   
   const magnifiedContainerRef = useRef(null);
@@ -29,7 +30,8 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/products/${id}`);
+        const apiUrl = `${process.env.REACT_APP_API_URL}/api/products/${id}`;
+        const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -61,7 +63,8 @@ const ProductDetailPage = () => {
   const handleMouseEnter = (e) => {
     const elem = e.currentTarget;
     const { width, height } = elem.getBoundingClientRect();
-    setImgSize([width, height]);
+    setImgWidth(width);
+    setImgHeight(height);
     setShowMagnifier(true);
   };
 

@@ -24,7 +24,7 @@ const CheckoutPage = () => {
       try {
         setLoadingAddresses(true);
         const token = localStorage.getItem('token');
-        const res = await axios.get('/api/users/addresses', {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/addresses`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const list = res.data.data.addresses;
@@ -87,7 +87,7 @@ const CheckoutPage = () => {
     try {
       setPlacingOrder(true);
       const token = localStorage.getItem('token');
-      const res = await axios.post('/api/orders', buildPayload(), {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/orders`, buildPayload(), {
         headers: { Authorization: `Bearer ${token}` },
       });
       const orderId = res.data.data.order._id;

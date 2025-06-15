@@ -29,17 +29,18 @@ const ProfilePage = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       // Fetch user profile
-      const profileResponse = await axios.get('/api/users/profile', { headers });
-      setUser(profileResponse.data.data.user);
+      const profileResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/profile`, { headers });
+      const { addresses, ...profileData } = profileResponse.data.data.user;
+      setUser(profileData);
       setForm({
-        firstName: profileResponse.data.data.user.firstName || '',
-        lastName: profileResponse.data.data.user.lastName || '',
-        phone: profileResponse.data.data.user.phone || ''
+        firstName: profileData.firstName || '',
+        lastName: profileData.lastName || '',
+        phone: profileData.phone || ''
       });
       setLoading(false);
 
       // Fetch user addresses
-      const addressesResponse = await axios.get('/api/users/addresses', { headers });
+      const addressesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/addresses`, { headers });
       setAddresses(addressesResponse.data.data.addresses);
       setAddressesLoading(false);
 
@@ -83,7 +84,7 @@ const ProfilePage = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        '/api/users/profile',
+        `${process.env.REACT_APP_API_URL}/api/users/profile`,
         {
           firstName: form.firstName,
           lastName: form.lastName,
@@ -132,7 +133,7 @@ const ProfilePage = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('/api/users/addresses', addressData, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/addresses`, addressData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Add new address to the start of the list
@@ -151,7 +152,7 @@ const ProfilePage = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`/api/users/addresses/${editingAddress._id}`, addressData, {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/users/addresses/${editingAddress._id}`, addressData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Update the address in the list
@@ -168,20 +169,34 @@ const ProfilePage = () => {
   };
 
   const handleDeleteAddress = async (addressId) => {
-    // Show a confirmation dialog before deleting
-    if (window.confirm('Are you sure you want to delete this address?')) {
-      setError(null);
-      try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`/api/users/addresses/${addressId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        // Remove the address from the list
-        setAddresses(prev => prev.filter(addr => addr._id !== addressId));
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to delete address.');
-        setIsModalOpen(false);
-      }
+    if (!window.confirm('Are you sure you want to delete this address?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/addresses/${addressId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Remove the address from the list
+      setAddresses(prev => prev.filter(addr => addr._id !== addressId));
+      setSuccess('Address deleted successfully!');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete address.');
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleSetDefaultAddress = async (addressId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/users/addresses/${addressId}/default`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAddresses(response.data.data.addresses);
+      setSuccess('Default address updated!');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update default address.');
+      setIsModalOpen(false);
     }
   };
 
