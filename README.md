@@ -13,6 +13,18 @@ Welcome to SF Shop, a feature-rich e-commerce front-end application built with R
 - **Quantity Management**: Update item quantities directly in the product list and the cart.
 - **User Authentication**: Secure user registration and JWT-based login system.
 
+## Live Demo Access
+
+You can test the live application using the following demo accounts, which have been pre-populated with different order histories and user data for a complete testing experience.
+
+- **Account 1:**
+  - **Username:** `isabellaa`
+  - **Password:** `isabellaapass`
+
+- **Account 2:**
+  - **Username:** `danielc`
+  - **Password:** `danielcpass`
+
 ## Performance Optimization Highlights
 
 This project goes beyond basic functionality and implements several key performance optimizations that are crucial for a modern, fast, and responsive user experience.

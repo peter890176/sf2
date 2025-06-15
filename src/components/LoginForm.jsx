@@ -122,6 +122,29 @@ const LoginForm = () => {
           {isSubmitting ? 'Logging In...' : 'Log In'}
         </button>
 
+        <div className="mt-6 p-4 bg-gray-100 rounded-lg text-sm text-left">
+          <h3 className="font-semibold text-gray-700 mb-3 text-center">Demo Accounts</h3>
+          <div className="space-y-3">
+            <div>
+              <p className="text-gray-600">
+                <strong className="font-medium text-gray-800">Username:</strong> isabellaa
+              </p>
+              <p className="text-gray-600">
+                <strong className="font-medium text-gray-800">Password:</strong> isabellaapass
+              </p>
+            </div>
+            <hr className="border-gray-200" />
+            <div>
+              <p className="text-gray-600">
+                <strong className="font-medium text-gray-800">Username:</strong> danielc
+              </p>
+              <p className="text-gray-600">
+                <strong className="font-medium text-gray-800">Password:</strong> danielcpass
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-4 text-center text-sm text-gray-500">
           <p>
             New to SF Shop?{' '}
