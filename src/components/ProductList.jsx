@@ -48,11 +48,11 @@ const ProductCard = memo(({
             <div className="stars-background">
               <span>★</span>
             </div>
-            <div className="stars-foreground" style={{ width: `${(product.rating / 5) * 100}%` }}>
+            <div className="stars-foreground" style={{ width: `${((product.rating || 0) / 5) * 100}%` }}>
               <span>★</span>
             </div>
           </div>
-          <span className="ml-1 text-sm font-bold text-black">{product.rating.toFixed(1)}</span>
+          <span className="ml-1 text-sm font-bold text-black">{(product.rating || 0).toFixed(1)}</span>
         </div>
         <div className="flex-grow">
           <Link to={`/product/${product.id}`} className="hover:underline">
@@ -65,10 +65,10 @@ const ProductCard = memo(({
               )}
             </div>
             <div className="flex items-baseline space-x-2 flex-wrap justify-end">
-              {Math.round(product.discountPercentage) > 0 ? (
+              {Math.round(product.discountPercentage || 0) > 0 ? (
                 <>
                   <div className="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                    -{product.discountPercentage.toFixed(0)}%
+                    -{(product.discountPercentage || 0).toFixed(0)}%
                   </div>
                   <p className="text-lg font-bold">
                     ${totalPrice.toFixed(2)}
