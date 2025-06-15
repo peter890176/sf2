@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import NavBar from './components/NavBar';
@@ -36,6 +36,7 @@ function App() {
                   <OrderSuccessPage />
                 </PrivateRoute>
               } />
+              <Route path="/orders" element={<Navigate to="/profile" state={{ view: 'orders' }} />} />
             </Routes>
           </main>
         </div>

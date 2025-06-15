@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../api/axios';
 import AddressModal from '../components/AddressModal';
+import OrderHistory from '../components/OrderHistory';
 
 const ProfilePage = () => {
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,6 +13,13 @@ const ProfilePage = () => {
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '' });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState('');
+  const [currentView, setCurrentView] = useState('profile'); // 'profile' or 'orders'
+
+  useEffect(() => {
+    if (location.state?.view === 'orders') {
+      setCurrentView('orders');
+    }
+  }, [location.state]);
 
   // New states for addresses
   const [addresses, setAddresses] = useState([]);
@@ -184,139 +194,170 @@ const ProfilePage = () => {
   if (error && !user) return <div className="text-center p-4 text-red-500">{error}</div>;
   if (!user) return null;
 
-  return (
-    <div className="max-w-md mx-auto">
-      {/* Profile Section */}
-      <div className="p-6 bg-white rounded-lg shadow-md mb-6">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Profile</h1>
-        {success && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">{success}</div>}
-        {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">{error}</div>}
-        {editMode ? (
-          <form onSubmit={handleSave} noValidate>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="firstName">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                id="firstName"
-                value={form.firstName}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border rounded-lg border-gray-300"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="lastName">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                id="lastName"
-                value={form.lastName}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border rounded-lg border-gray-300"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="phone">
-                Phone
-              </label>
-              <input
-                type="text"
-                name="phone"
-                id="phone"
-                value={form.phone}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border rounded-lg border-gray-300"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={saving}
-              className={`w-full bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors ${
-                saving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black'
-              }`}
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              type="button"
-              onClick={handleCancel}
-              disabled={saving}
-              className="w-full mt-2 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg transition-colors hover:bg-gray-300"
-            >
-              Cancel
-            </button>
-          </form>
-        ) : (
-          <>
-            <div className="mb-4"><strong>Username:</strong> {user.username}</div>
-            <div className="mb-4"><strong>Email:</strong> {user.email}</div>
-            <div className="mb-4"><strong>Name:</strong> {user.firstName} {user.lastName}</div>
-            <div className="mb-4"><strong>Phone:</strong> {user.phone}</div>
-            <div className="mb-4"><strong>Registered:</strong> {user.createdAt ? new Date(user.createdAt).toLocaleString() : '-'}</div>
-            <div className="mb-4"><strong>Last Login:</strong> {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : '-'}</div>
-            <button
-              onClick={handleEdit}
-              className="w-full bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors hover:bg-black"
-            >
-              Edit
-            </button>
-          </>
-        )}
-      </div>
+  const TabButton = ({ view, label }) => (
+    <button
+      onClick={() => setCurrentView(view)}
+      className={`px-6 py-2 font-medium text-sm rounded-md transition-colors ${
+        currentView === view
+          ? 'bg-gray-800 text-white'
+          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+      }`}
+    >
+      {label}
+    </button>
+  );
 
-      {/* Address Section */}
-      <div className="p-6 bg-white rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">My Addresses</h2>
-          <button 
-            onClick={handleOpenAddModal}
-            className="bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors hover:bg-black text-sm"
-          >
-            Add New Address
-          </button>
-        </div>
-        {addressesLoading ? (
-          <div>Loading addresses...</div>
-        ) : addresses.length > 0 ? (
-          <div className="space-y-4">
-            {addresses.map((address) => (
-              <div key={address._id} className="border p-4 rounded-lg">
-                <p className="font-semibold">{address.addressLine}</p>
-                <p>{address.city}, {address.state} {address.postalCode}</p>
-                {address.isDefault && (
-                  <span className="text-xs font-bold bg-gray-200 text-gray-800 rounded-full px-2 py-1 mt-2 inline-block">Default</span>
-                )}
-                <div className="mt-3 flex gap-2">
-                  <button onClick={() => handleOpenEditModal(address)} className="text-sm text-blue-600 hover:underline">Edit</button>
-                  <button
-                    onClick={() => handleDeleteAddress(address._id)}
-                    className="text-sm text-red-600 hover:underline"
-                  >
-                    Delete
-                  </button>
-                  {!address.isDefault && (
-                    <button
-                      onClick={() => handleSetDefaultAddress(address._id)}
-                      className="text-sm text-green-600 hover:underline"
-                    >
-                      Set as Default
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>You have no saved addresses.</p>
-        )}
+  return (
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">My Account</h1>
+
+      {/* Tabs */}
+      <div className="flex space-x-4 mb-6 border-b pb-4">
+        <TabButton view="profile" label="Profile & Addresses" />
+        <TabButton view="orders" label="Order History" />
       </div>
+      
+      {currentView === 'profile' && (
+        <>
+          {/* Profile Section */}
+          <div className="p-6 bg-white rounded-lg shadow-md mb-6">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">My Profile</h2>
+            {success && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">{success}</div>}
+            {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">{error}</div>}
+            {editMode ? (
+              <form onSubmit={handleSave} noValidate>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-bold mb-2" htmlFor="firstName">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    id="firstName"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded-lg border-gray-300"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-bold mb-2" htmlFor="lastName">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    id="lastName"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded-lg border-gray-300"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-bold mb-2" htmlFor="phone">
+                    Phone
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded-lg border-gray-300"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className={`w-full bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors ${
+                    saving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black'
+                  }`}
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={saving}
+                  className="w-full mt-2 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg transition-colors hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+              </form>
+            ) : (
+              <>
+                <div className="mb-4"><strong>Username:</strong> {user.username}</div>
+                <div className="mb-4"><strong>Email:</strong> {user.email}</div>
+                <div className="mb-4"><strong>Name:</strong> {user.firstName} {user.lastName}</div>
+                <div className="mb-4"><strong>Phone:</strong> {user.phone}</div>
+                <div className="mb-4"><strong>Registered:</strong> {user.createdAt ? new Date(user.createdAt).toLocaleString() : '-'}</div>
+                <div className="mb-4"><strong>Last Login:</strong> {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : '-'}</div>
+                <button
+                  onClick={handleEdit}
+                  className="w-full bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors hover:bg-black"
+                >
+                  Edit
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Address Section */}
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">My Addresses</h2>
+              <button 
+                onClick={handleOpenAddModal}
+                className="bg-gray-800 text-white py-2 px-4 rounded-lg transition-colors hover:bg-black text-sm"
+              >
+                Add New Address
+              </button>
+            </div>
+            {addressesLoading ? (
+              <div>Loading addresses...</div>
+            ) : addresses.length > 0 ? (
+              <div className="space-y-4">
+                {addresses.map((address) => (
+                  <div key={address._id} className="border p-4 rounded-lg">
+                    <p className="font-semibold">{address.addressLine}</p>
+                    <p>{address.city}, {address.state} {address.postalCode}</p>
+                    {address.isDefault && (
+                      <span className="text-xs font-bold bg-gray-200 text-gray-800 rounded-full px-2 py-1 mt-2 inline-block">Default</span>
+                    )}
+                    <div className="mt-3 flex gap-2">
+                      <button onClick={() => handleOpenEditModal(address)} className="text-sm text-blue-600 hover:underline">Edit</button>
+                      <button
+                        onClick={() => handleDeleteAddress(address._id)}
+                        className="text-sm text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                      {!address.isDefault && (
+                        <button
+                          onClick={() => handleSetDefaultAddress(address._id)}
+                          className="text-sm text-green-600 hover:underline"
+                        >
+                          Set as Default
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>You have no saved addresses.</p>
+            )}
+          </div>
+        </>
+      )}
+
+      {currentView === 'orders' && (
+        <div className="p-6 bg-white rounded-lg shadow-md">
+            <OrderHistory />
+        </div>
+      )}
       
       {/* Address Modal */}
       <AddressModal
