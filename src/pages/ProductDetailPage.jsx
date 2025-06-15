@@ -29,12 +29,14 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://dummyjson.com/products/${id}`);
+        const response = await fetch(`/api/products/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setProduct(data);
+        const prod = data.data?.product || data.product || data;
+        const normalized = prod._id ? { ...prod, id: prod._id } : prod;
+        setProduct(normalized);
         setCurrentImageIndex(0);
         setError(null);
       } catch (err) {

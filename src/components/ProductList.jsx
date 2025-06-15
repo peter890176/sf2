@@ -176,12 +176,14 @@ const ProductList = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://dummyjson.com/products');
+        const response = await fetch('/api/products');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setProducts(data.products);
+        const list = data.data?.products || data.products || data;
+        const normalized = list.map((p) => ({ ...p, id: p._id }));
+        setProducts(normalized);
         setError(null);
       } catch (err) {
         setError(err.message);
