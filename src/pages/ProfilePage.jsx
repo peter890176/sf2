@@ -288,7 +288,6 @@ const ProfilePage = () => {
               </form>
             ) : (
               <>
-                <div className="mb-4"><strong>Username:</strong> {user.username}</div>
                 <div className="mb-4"><strong>Email:</strong> {user.email}</div>
                 <div className="mb-4"><strong>Name:</strong> {user.firstName} {user.lastName}</div>
                 <div className="mb-4"><strong>Phone:</strong> {user.phone}</div>

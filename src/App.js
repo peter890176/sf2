@@ -14,35 +14,35 @@ import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
-    <AuthProvider>
     <CartProvider>
-      <Router>
-        <div className="bg-gray-100 min-h-screen">
-          <NavBar />
-          <main className="container mx-auto p-4">
-            <Routes>
-              <Route path="/" element={<ShopPage />} />
-              <Route path="/product/:id" element={<ProductDetailPage />} />
-              <Route path="/register" element={<RegisterForm />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/profile" element={
-                <PrivateRoute>
-                  <ProfilePage />
-                </PrivateRoute>
-              } />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/order-success/:id" element={
-                <PrivateRoute>
-                  <OrderSuccessPage />
-                </PrivateRoute>
-              } />
-              <Route path="/orders" element={<Navigate to="/profile" state={{ view: 'orders' }} />} />
-            </Routes>
-          </main>
-        </div>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <div className="bg-gray-100 min-h-screen">
+            <NavBar />
+            <main className="container mx-auto p-4">
+              <Routes>
+                <Route path="/" element={<ShopPage />} />
+                <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/register" element={<RegisterForm />} />
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/profile" element={
+                  <PrivateRoute>
+                    <ProfilePage />
+                  </PrivateRoute>
+                } />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/order-success/:id" element={
+                  <PrivateRoute>
+                    <OrderSuccessPage />
+                  </PrivateRoute>
+                } />
+                <Route path="/orders" element={<Navigate to="/profile" state={{ view: 'orders' }} />} />
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      </AuthProvider>
     </CartProvider>
-    </AuthProvider>
   );
 }
 

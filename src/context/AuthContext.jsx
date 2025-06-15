@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
+import { useCart } from './CartContext';
 
 const AuthContext = createContext(null);
 
@@ -15,11 +16,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { clearCart } = useCart();
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
     setUser(null);
-  }, []);
+    clearCart();
+  }, [clearCart]);
 
   const fetchUserProfile = useCallback(async () => {
     try {

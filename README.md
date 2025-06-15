@@ -1,6 +1,6 @@
 # SF Shop - A Modern E-commerce Platform Front-End
 
-Welcome to SF Shop, a feature-rich e-commerce front-end application built with React. This project serves as a practical demonstration of modern web development techniques, with a strong emphasis on performance optimization and clean code architecture.
+Welcome to SF Shop, a feature-rich e-commerce front-end application built with React. This project serves as a practical demonstration of modern web development techniques, with a strong emphasis on performance optimization, clean code architecture, and production-ready deployment.
 
 **[➡️ Live Demo](https://sfshop.netlify.app/)**
 
@@ -11,7 +11,7 @@ Welcome to SF Shop, a feature-rich e-commerce front-end application built with R
 - **Product Details Page**: View detailed information and image galleries for each product.
 - **Shopping Cart**: Fully functional cart to add, review, and manage items.
 - **Quantity Management**: Update item quantities directly in the product list and the cart.
-- **User Registration**: A dedicated page for user registration.
+- **User Authentication**: Secure user registration and JWT-based login system.
 
 ## Performance Optimization Highlights
 
@@ -26,12 +26,26 @@ This project goes beyond basic functionality and implements several key performa
 ### 3. Asset Loading Optimization
 - **Image Lazy Loading**: Off-screen images (e.g., product thumbnails further down the list) use the native `loading="lazy"` attribute. This prioritizes the loading of critical, above-the-fold content, improving the Largest Contentful Paint (LCP) metric and perceived performance.
 
+## Authentication
+This application implements a JWT (JSON Web Token) based authentication system.
+- **Token Storage**: Upon successful login, a JWT token is stored in `localStorage`.
+- **Authenticated Requests**: An Axios interceptor automatically attaches the JWT token to the `Authorization` header for all subsequent API requests, ensuring secure communication with the backend.
+
 ## Tech Stack
 
 - **Framework**: [React](https://reactjs.org/)
 - **Routing**: [React Router](https://reactrouter.com/)
+- **API Communication**: [Axios](https://axios-http.com/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **State Management**: React Context API
+
+## Backend Repository
+
+This frontend application is powered by a dedicated Node.js backend API. The backend, built with Node.js, Express.js, and MongoDB, handles user authentication, product management, order processing, and more.
+
+- **Backend Source Code**: [peter890176/sf2_backend on GitHub](https://github.com/peter890176/sf2_backend)
+
+For detailed instructions on how to set up and run the backend server locally, please refer to its repository's `README.md`.
 
 ## Getting Started
 
@@ -41,18 +55,23 @@ To get a local copy up and running, follow these simple steps.
 
 - [Node.js](https://nodejs.org/) (version 14 or later recommended)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Docker](https://www.docker.com/) (optional, for containerized deployment)
 
 ### Installation
 
 1. Clone the repo
    ```sh
-   git clone <YOUR_REPOSITORY_URL>
+   git clone https://your-repository-url.com/sf2.git
    ```
 2. Navigate to the project directory
    ```sh
    cd sf2
    ```
-3. Install dependencies
+3. Create a `.env` file in the root of the project and add your backend API URL:
+   ```
+   REACT_APP_API_URL=https://your-api-backend.com/api
+   ```
+4. Install dependencies
    ```sh
    npm install
    ```
@@ -75,11 +94,23 @@ To get a local copy up and running, follow these simple steps.
   ```
   Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
+## Deployment & Containerization
+
+This project is configured for seamless deployment using Docker and Netlify.
+
+- **Netlify**: The `netlify.toml` file contains the necessary configuration to build and deploy the application on Netlify.
+- **Docker**: A `Dockerfile` and `docker-compose.yml` are provided for building and running the application in a containerized environment.
+  - To build and run the Docker container:
+    ```sh
+    docker-compose up --build
+    ```
+
 ## Project Structure
 
 ```
 sf2/
 └── src/
+    ├── api/             # Axios setup and API request functions
     ├── components/      # Reusable UI components (NavBar, ProductCard, etc.)
     ├── context/         # Global state management (CartContext)
     ├── pages/           # Page components for routing (ShopPage, ProductDetailPage, etc.)
