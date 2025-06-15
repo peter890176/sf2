@@ -127,10 +127,10 @@ const LoginForm = () => {
           <div className="space-y-3">
             <div>
               <p className="text-gray-600">
-                <strong className="font-medium text-gray-800">Username:</strong> isabellaa
+                <strong className="font-medium text-gray-800">Username:</strong> emilys
               </p>
               <p className="text-gray-600">
-                <strong className="font-medium text-gray-800">Password:</strong> isabellaapass
+                <strong className="font-medium text-gray-800">Password:</strong> emilyspass
               </p>
             </div>
             <hr className="border-gray-200" />

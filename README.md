@@ -18,8 +18,8 @@ Welcome to SF Shop, a feature-rich e-commerce front-end application built with R
 You can test the live application using the following demo accounts, which have been pre-populated with different order histories and user data for a complete testing experience.
 
 - **Account 1:**
-  - **Username:** `isabellaa`
-  - **Password:** `isabellaapass`
+  - **Username:** `emilys`
+  - **Password:** `emilyspass`
 
 - **Account 2:**
   - **Username:** `danielc`
